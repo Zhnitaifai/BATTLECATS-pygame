@@ -1,0 +1,1 @@
+health, damage, range, speed, foreswing, attackCooldown, knockbacks
