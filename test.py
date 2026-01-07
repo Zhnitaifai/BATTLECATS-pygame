@@ -1,6 +1,7 @@
 import pygame, sys
 from pygame.locals import *
-
+import Unit
+from Unit import *
 pygame.init()
 
 FPS = 30 # frames per second setting
@@ -12,17 +13,20 @@ pygame.display.set_caption('Animation')
 
 WHITE = (255, 255, 255)
 catImgs = []
-for i in range(17):    
-    catImgs.append(pygame.image.load(f'Cats/Cat/Normal/Walk/frame_{i}.png'))
-catx = 1000
+for i in range(17):  
+    animation = pygame.image.load(f'Cats/Cat/Normal/Walk/frame_{i}.png')
+    catImgs.append(pygame.transform.scale(animation, (500, 350)))
+bg = pygame.transform.scale(pygame.image.load('backgrounds/classicBG.png'), (2000, 1500))
+catx = 1300
 caty = 500
 direction = 'right'
 frame = 0
 running = True
+unit = Unit("cat", "Cat", 1)
 while running: # the main game loop
-    DISPLAYSURF.fill(WHITE)
+    DISPLAYSURF.blit(bg, (0, -420))
 
-    DISPLAYSURF.blit(catImgs[frame], (catx, caty))
+    DISPLAYSURF.blit(unit.unitUpdate())
     frame += 1
     if frame > 16:
         frame = 0
