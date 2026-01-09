@@ -22,11 +22,26 @@ caty = 500
 direction = 'right'
 frame = 0
 running = True
-unit = Unit("cat", "Cat", 1)
+cat = Unit("cat", "Cat", 1)
+tank = Unit("cat", "Tank", 1)
+doge = Unit("notCat", "Doge", 1)
 while running: # the main game loop
     DISPLAYSURF.blit(bg, (0, -420))
 
-    DISPLAYSURF.blit(unit.unitUpdate())
+    catPos = {}
+    enemiesPos = {}
+    display = cat.unitWalkUpdate()
+    catPos.update({"cat": display[1]})
+    displau = tank.unitWalkUpdate()
+    catPos.update({"tank": display[1]})
+    displai = doge.unitWalkUpdate()
+    enemiesPos.update({"doge": display[1]})
+    cat.unitDetectionUpdate(enemiesPos)
+    tank.unitDetectionUpdate(enemiesPos)
+    doge.unitDetectionUpdate(enemiesPos)
+    DISPLAYSURF.blit(display[0], display[1])
+    DISPLAYSURF.blit(displau[0], displau[1])
+    DISPLAYSURF.blit(displai[0], displai[1])
     frame += 1
     if frame > 16:
         frame = 0
