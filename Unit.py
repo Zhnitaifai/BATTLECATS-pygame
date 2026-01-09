@@ -58,7 +58,7 @@ class Unit:
         else:
             detectBox = Rect(self.x, self.y+100, self.stats[2], 300)
         for i in positions:
-            if detectBox.collidepoint(positions[i][1], positions[i][1]):
+            if detectBox.collidepoint(positions[i][0], positions[i][1]):
                 self.state = 'attack'
                 return True
         return False
