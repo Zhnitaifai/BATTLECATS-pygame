@@ -12,8 +12,11 @@ pygame.display.set_caption('BATTLE CATS')
 GAMESTATE = "START"
 '''
     GAME STATES:
-    - START
+    - MENU
+        - instructions if 1st time
         - start button
+        - upgrade cats
+        - 
     - PLAY
         - start level from start
     - PAUSE
@@ -23,6 +26,16 @@ GAMESTATE = "START"
     - END
         - end screen (Rewards)
 '''
+
+# def playAudio(name):
+soundPlayer = pygame.mixer.Sound('Music/bcMenu1.ogg')
+pygame.mixer.Sound.play("Music/bcMenu1.ogg")
+stages = {
+    
+}
+
+# pygame.mixer.music.play(-1, 0.0) #-1: play forever, 0.0 = starting point
+musicPlaying = True
 
 hotBarSwitch = 1 #1st row = 1, 2nd row = 2
 
@@ -108,8 +121,10 @@ while True:
     
     # start screen -> go directly to cat base screen
         # only have START, UPGRADE, xp bar (top right)
-        # If doing gacha add catfood, rare cat capcule button
-    
+    #     # If doing gacha add catfood, rare cat capcule button
+    # if GAMESTATE == menu
+
+
     # Gameplay
 
     # end screen
