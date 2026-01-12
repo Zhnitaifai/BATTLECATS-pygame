@@ -41,6 +41,7 @@ class Unit:
             self.y = random.randint(400, 450)
             
     def unitWalkUpdate(self):
+        print(self.state)
         if self.state == 'walk':
             self.currentAnimation += 1
             if self.currentAnimation >= len(self.walkAnimations):
@@ -49,19 +50,20 @@ class Unit:
                 self.x -= int(self.stats[3]/2)
             else:
                 self.x += int(self.stats[3]/2)
-        print(self.name, self.x, self.y)
         return self.walkAnimations[self.currentAnimation], (self.x, self.y)
     
     def unitDetectionUpdate(self, positions):
+        print(positions)
         if self.type == 'cat':
-            detectBox = Rect(self.x, self.y+100, self.stats[2], 300)    
+            detectBox = Rect(self.x-self.stats[2], self.y+100, 500, self.stats[2])    
         else:
-            detectBox = Rect(self.x, self.y+100, self.stats[2], 300)
+            detectBox = Rect(self.x, self.y+100, self.stats[2], 500)
+        print(detectBox.topleft)
         for i in positions:
             if detectBox.collidepoint(positions[i][0], positions[i][1]):
                 self.state = 'attack'
-                return True
-        return False
+                return True, detectBox
+        return False, detectBox
             
             
             
