@@ -30,13 +30,13 @@ while running: # the main game loop
 
     catPos = {}
     enemiesPos = {}
-    display = cat.unitWalkUpdate()
-    catPos.update({"cat": display[1]})
-    displau = tank.unitWalkUpdate()
-    catPos.update({"tank": display[1]})
-    displai = doge.unitWalkUpdate()
-    enemiesPos.update({"doge": display[1]})
-    pygame.draw.rect(DISPLAYSURF, (0, 0, 0), cat.unitDetectionUpdate(enemiesPos)[1])
+    display = cat.unitUpdate()
+    catPos.update({"cat": display[2]})
+    displau = tank.unitUpdate()
+    catPos.update({"tank": displau[2]})
+    displai = doge.unitUpdate()
+    enemiesPos.update({"doge": displai[2]})
+    cat.unitDetectionUpdate(enemiesPos)
     tank.unitDetectionUpdate(enemiesPos)
     doge.unitDetectionUpdate(catPos)
     DISPLAYSURF.blit(display[0], display[1])
@@ -45,7 +45,6 @@ while running: # the main game loop
     frame += 1
     if frame > 16:
         frame = 0
-
     for event in pygame.event.get():
         if event.type == QUIT:
             running = False
