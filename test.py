@@ -22,26 +22,32 @@ caty = 500
 direction = 'right'
 frame = 0
 running = True
-cat = Unit("cat", "Cat", 1)
-tank = Unit("cat", "Tank", 1)
-doge = Unit("notCat", "Doge", 1)
+catDict = []
+enemyDict = []
+catAmt = 0
+enemyAmt = 0
+def deploy(type, name, level):
+    new_unit = Unit(type, name, level)
+    if type == 'cat':
+        catDict.update({f'{name}{catAmt+1}': new_unit})
+        catAmt += 1
 while running: # the main game loop
     DISPLAYSURF.blit(bg, (0, -420))
 
     catPos = {}
-    enemiesPos = {}
-    display = cat.unitUpdate()
-    catPos.update({"cat": display[2]})
-    displau = tank.unitUpdate()
-    catPos.update({"tank": displau[2]})
-    displai = doge.unitUpdate()
-    enemiesPos.update({"doge": displai[2]})
-    cat.unitDetectionUpdate(enemiesPos)
-    tank.unitDetectionUpdate(enemiesPos)
-    doge.unitDetectionUpdate(catPos)
-    DISPLAYSURF.blit(display[0], display[1])
-    DISPLAYSURF.blit(displau[0], displau[1])
-    DISPLAYSURF.blit(displai[0], displai[1])
+    enemyPos = {}
+    catDisplay = {}
+    enemyDisplay = {}
+    if len(catDict) > 0:
+        for i in (catDict):
+            display = catDict[i].unitUpdate()
+            catPos.update({i: display[2]})
+            catDisplay.update({i: display[1]})
+    if len(enemyDict) > 0:
+        for i in (enemyDict):
+            display = enemyDict[i].unitUpdate()
+            enemyPos.update({i: display[2]})
+            enemyDisplay.update({i: display[1]})
     frame += 1
     if frame > 16:
         frame = 0
@@ -52,6 +58,8 @@ while running: # the main game loop
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 running = False
+            elif event.key == pygame.K_1:
+                deploy("cat", "Cat", "1")
 
     pygame.display.update()
     fpsClock.tick(FPS)

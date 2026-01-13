@@ -88,6 +88,8 @@ class Unit:
                         self.currentAnimation = self.attackAnimations[self.currentFrame]
         elif self.state == 'idle':
             self.currentAnimation = self.walkAnimations[self.currentFrame]
+            if self.attackCooldown == 0:
+                self.state = "walk"
         self.xHitbox = self.x+(200 if self.type == 'cat' else 300)
         return self.currentAnimation , (self.x, self.y), (self.xHitbox, self.y)
     
@@ -97,7 +99,7 @@ class Unit:
         else:
             detectBox = Rect(self.xHitbox, self.y-400, self.stats[2], 1000)  
         for i in positions:
-            if detectBox.collidepoint(positions[i][0], positions[i][1]):
+            if detectBox.collidepoint(positions[i][0], positions[i][1]) and self.state != "attack" and self.state != 'idle':
                 self.state = ('attack' if self.attackCooldown == 0 else "idle")
                 self.currentFrame = 0
                 
