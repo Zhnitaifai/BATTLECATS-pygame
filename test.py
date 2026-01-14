@@ -22,32 +22,46 @@ caty = 500
 direction = 'right'
 frame = 0
 running = True
-catDict = []
-enemyDict = []
+catDict = {}
+enemyDict = {}
 catAmt = 0
 enemyAmt = 0
-def deploy(type, name, level):
+
+def deploy(type, name, level, Amt):
     new_unit = Unit(type, name, level)
     if type == 'cat':
         catDict.update({f'{name}{catAmt+1}': new_unit})
-        catAmt += 1
+        
+    else: 
+        enemyDict.update({f'{name}{enemyAmt+1}': new_unit})
+        
+catPos = {}
+enemyPos = {}
 while running: # the main game loop
     DISPLAYSURF.blit(bg, (0, -420))
-
     catPos = {}
-    enemyPos = {}
-    catDisplay = {}
-    enemyDisplay = {}
     if len(catDict) > 0:
         for i in (catDict):
-            display = catDict[i].unitUpdate()
+            display = catDict[i].unitUpdate(enemyPos)
             catPos.update({i: display[2]})
-            catDisplay.update({i: display[1]})
+            DISPLAYSURF.blit(display[0], display[1])
+            catDict[i].unitDetectionUpdate(enemyPos)
+            if display[3]:
+                for i in display[5]:
+                    enemyDict[i].takeDamage(display[4])
+    enemyPos = {}
     if len(enemyDict) > 0:
         for i in (enemyDict):
-            display = enemyDict[i].unitUpdate()
+            display = enemyDict[i].unitUpdate(catPos)
             enemyPos.update({i: display[2]})
-            enemyDisplay.update({i: display[1]})
+            DISPLAYSURF.blit(display[0], display[1])
+            enemyDict[i].unitDetectionUpdate(catPos)
+    if len(catDict) > 0:
+        for i in (catDict):
+            catDict[i].unitDetectionUpdate(enemyPos)
+    if len(enemyDict) > 0:
+        for i in (enemyDict):
+            enemyDict[i].unitDetectionUpdate(catPos)
     frame += 1
     if frame > 16:
         frame = 0
@@ -58,8 +72,12 @@ while running: # the main game loop
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 running = False
+            elif event.key == pygame.K_0:
+                deploy("cat", "Cat", "1", catAmt)
+                catAmt += 1
             elif event.key == pygame.K_1:
-                deploy("cat", "Cat", "1")
+                deploy("notCat", "Doge", "100", enemyAmt)
+                enemyAmt += 1
 
     pygame.display.update()
     fpsClock.tick(FPS)
