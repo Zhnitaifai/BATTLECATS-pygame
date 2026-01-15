@@ -21,8 +21,8 @@ class Unit:
             self.stats = self.stats.readline().split(",")
             for i in range(len(self.stats)):
                 self.stats[i] = int(self.stats[i]) 
-            self.health = self.stats[0]*(1+int(self.level-1)*.2)
-            self.attack = self.stats[1]*(1+int(self.level-1)*.2)
+            self.health = int(self.stats[0]*(1+(self.level-1)*.2))
+            self.attack = int(self.stats[1]*(1+(self.level-1)*.2))
             self.walkAnimations = []
             for i in range(self.stats[7]):    
                 animation = pygame.image.load(f'Cats/{name}/Normal/Walk/frame_{i}.png')
@@ -40,8 +40,8 @@ class Unit:
             self.stats = self.stats.readline().split(",")
             for i in range(len(self.stats)):
                 self.stats[i] = int(self.stats[i]) 
-            self.health = self.stats[0]*self.level
-            self.attack = self.stats[0]*self.level
+            self.health = int(self.stats[0]*self.level/100)
+            self.attack = int(self.stats[1]*self.level/100)
             self.walkAnimations = []
             for i in range(self.stats[7]):    
                 animation = pygame.image.load(f'Enemies/{name}/Walk/frame_{i}.png')
@@ -82,8 +82,7 @@ class Unit:
                     self.attackState = "backswing"
                     self.attackCooldown = self.stats[5]
                     attack = True
-                    if self.stats[9] == 0:
-                        targets.append(list(positions.keys()))[0]
+                    targets = self.unitTargetUpdate(positions, self.stats[9])
                 case "backswing":
                     self.currentFrame += 1
                     if self.currentFrame >= len(self.attackAnimations):
@@ -98,7 +97,14 @@ class Unit:
             if self.attackCooldown == 0:
                 self.state = "walk"
         self.xHitbox = self.x+(200 if self.type == 'cat' else 300)
-        return self.currentAnimation , (self.x, self.y), (self.xHitbox, self.y), attack, self.attack, targets
+        return {
+            "animation":self.currentAnimation, 
+            "displayPos":(self.x, self.y), 
+            "hitbox":(self.xHitbox, self.y), 
+            "attack?":attack, 
+            "damage":self.attack, 
+            "targets":targets
+        }
     
     def unitDetectionUpdate(self, positions):
         if self.type == 'cat':
@@ -113,8 +119,23 @@ class Unit:
                 return True, detectBox
         return False, detectBox
     
+    def unitTargetUpdate(self, positions, attackType):
+        targets = []
+        if self.type == 'cat':
+            detectBox = Rect(self.xHitbox-self.stats[2], self.y-400, self.stats[2], 1000)    
+        else:
+            detectBox = Rect(self.xHitbox, self.y-400, self.stats[2], 1000)  
+        for i in positions:
+            if detectBox.collidepoint(positions[i][0], positions[i][1]):
+                targets.append(i)
+                if attackType == 0:
+                    return targets
+        return targets
+    
     def takeDamage(self, damage):
         self.health -= damage
+        if self.type == 'cat':
+            print(self.health)
         if self.health <= 0:
             return True
         return False

@@ -43,19 +43,25 @@ while running: # the main game loop
     if len(catDict) > 0:
         for i in (catDict):
             display = catDict[i].unitUpdate(enemyPos)
-            catPos.update({i: display[2]})
-            DISPLAYSURF.blit(display[0], display[1])
+            catPos.update({i: display["hitbox"]})
+            DISPLAYSURF.blit(display["animation"], display["displayPos"])
             catDict[i].unitDetectionUpdate(enemyPos)
-            if display[3]:
-                for i in display[5]:
-                    enemyDict[i].takeDamage(display[4])
+            if display["attack?"]:
+                for i in display["targets"]:
+                    if enemyDict[i].takeDamage(display["damage"]):
+                        del enemyDict[i]
+                        del enemyPos[i]
     enemyPos = {}
     if len(enemyDict) > 0:
         for i in (enemyDict):
             display = enemyDict[i].unitUpdate(catPos)
-            enemyPos.update({i: display[2]})
-            DISPLAYSURF.blit(display[0], display[1])
+            enemyPos.update({i: display["hitbox"]})
+            DISPLAYSURF.blit(display["animation"], display["displayPos"])
             enemyDict[i].unitDetectionUpdate(catPos)
+            if display["attack?"]:
+                for i in display["targets"]:
+                    if catDict[i].takeDamage(display["damage"]):
+                        del catDict[i]
     if len(catDict) > 0:
         for i in (catDict):
             catDict[i].unitDetectionUpdate(enemyPos)
@@ -76,10 +82,14 @@ while running: # the main game loop
                 deploy("cat", "Cat", "1", catAmt)
                 catAmt += 1
             elif event.key == pygame.K_1:
-                deploy("notCat", "Doge", "100", enemyAmt)
+                deploy("notCat", "Doge", "150", enemyAmt)
                 enemyAmt += 1
+            elif event.key == pygame.K_9:
+                deploy('cat', "Tank", "1", catAmt)
+                catAmt += 1
 
     pygame.display.update()
     fpsClock.tick(FPS)
     
+
 pygame.quit()
