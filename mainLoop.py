@@ -28,8 +28,127 @@ GAMESTATE = "START"
 '''
 # stats for all stages
 stages = {
-    # "name": (baseHP, ((Name, Amount[-1 for infinite], startTime[seconds], interval(low, higher))), maxNumberOfEnemies)
-    "Korea": (1000, (("Doge", 1, 0, 0), ("Doge", -1, 20, (6, 10))), 3)
+    # "name": (baseHP, ((Name, healthMultiplier, Amount[-1 for infinite, -2 for boss (only 1)], startTime(startEvent(e.g. boss, hp, start), seconds), interval(low, higher)), (other units)), maxNumberOfEnemies)
+    "Korea": (1000, (("Doge", 150, 1, ("start", 0), (0, 0)), 
+                     ("Doge", 150, -1, ("start", 20), (6, 10))
+                    ),
+                    3),
+    "Cambodia": (1500, (("Doge", 150, -1, ("start", 0), (6, 10)), 
+                        ("Snache", 150, -1, ("start", 0), (10, 26.67)), 
+                        ("ThoseGuys", 150, -1, ("start", 0), (10, 26.67))
+                        ),
+                        6),
+    "Singapore": (6000, (("Doge", 150, -1, ("start", 0), (4, 10)), 
+                         ("Doge", 150, -1, ("start", 30), (6, 30)), 
+                         ("Snache", 150, -1, ("start", 60), (10, 30)), 
+                         ("ThoseGuys", 150, -1, ("start", 90), (10, 30)), 
+                         ("ThoseGuys", 150, 20, ("hp", 60), (0.07, 0.13))
+                        ),
+                        10),
+    "Dubai": (10000, (("Doge", 150, -1, ("start", 0), (6.67, 13.33)),
+                      ("Snache", 150, -1, ("start", 20), (6.67, 13.33)),
+                      ("ThoseGuys", 150, -1, ("start", 40), (6.67, 13.33)),
+                      ("ThoseGuys", 150, 6, ("hp", 90), (2, 4)),
+                      ("JackiePeng", 150, 1, ("hp", 90), (0, 0)),
+                      ("ThoseGuys", 150, -1, ("hp", 88), (3.33 - 13.33)), 
+                      ("JackiePeng", 150, 1, ("hp", 88), (0, 0)),
+                    ), 
+                    12),
+    "South Africa": (14000, (("Doge", 150, -1, ("start", 0), (1, 10)),
+                             ("Snache", 150, -1, ("start", 0), (1, 10)),
+                             ("ThoseGuys", 150, -1, ("start", 0), (1, 10)),
+                             ("JackiePeng", 150, 1, ("start", 100), (0, 0)),
+                             ("JackiePeng", 150, 1, ("start", 102), (0, 0)),
+                             ("Pigge", 150, -1, ("start", 133.33), (40, 60)),
+                             ("Hippoe", 150, -1, ("start", 133.33), (40, 60)),
+                             ("JackiePeng", 150, 2, ("hp", 20), (0.5, 1))
+                             ),
+                             10),
+    "Turkey": (20000, (("Doge", 150, -1, ("start", 0), (1, 10)),
+                       ("Snache", 150, -1, ("start", 0), (1, 10)),
+                       ("ThoseGuys", 150, -1, ("start", 0), (1, 10)),
+                       ("BaaBaa", 150, -1, ("start", 60), (60, 120)),
+                       ("Pigge", 150, -1, ("start", 60), (60, 120)),
+                       ("Hippoe", 150, -1, ("start", 80), (60, 120)),
+                       ("Gorie", 150, -1, ("start", 133.33), (60, 120)),
+                       ("JackiePeng", 150, -1, ("start", 80), (60, 120)),
+                       ),
+                       10),
+    "Monaco": (30000, (("Doge", 150, -1, ("start", 0), (1, 10)),
+                       ("Snache", 150, -1, ("start", 0), (1, 10)),
+                       ("ThoseGuys", 150, -1, ("start", 20), (1, 2)),
+                       ("Hippoe", 150, 1, ("start", 40), (0, 0)),
+                       ("BaaBaa", 150, -1, ("hp", 50), (4.33, 8)),
+                       ("JackiePeng", 150, -1, ("hp", 50), (4.33, 8)),
+                       ),
+                       5),
+    "Denmark": (36000, (("Doge", 150, -1, ("start", 0), (3.33, 30)),
+                        ("Snache", 150, -1, ("start", 10), (10, 20)),
+                        ("ThoseGuys", 150, -1, ("start", 20), (10, 10)),
+                        ("Croco", 150, -1, ("start", 40), (10, 40)),
+                        ("Leboin", 150, -2, ("hp", 90), 0),
+                        ("ThoseGuys", 150, -1, ("hp", 90), (0.07, 1)),
+                        ("ThoseGuys", 150, 20, ("hp", 90), (0.07, 0.07)),
+                        ),
+                        10),
+    "Canada": (36000, (("Snache", 150, -1, ("start", 10), (5, 6.67)),
+                       ("ThoseGuys", 150, -1, ("start", 20), (6.67, 10)),
+                       ("Croco", 150, -1, ("start", 40), (10, 20)),
+                       ("BaaBaa", 150, -1, ("start", 60), (10, 20)),
+                       ("Gorie", 150, -1, ("start", 100), (30, 60)),
+                       ("SirSeal", 150, -1, ("start", 200), (30, 60)),
+                       ("JackiePeng", 150, -1, ("start", 80), (30, 60)),
+                       ("Hippoe", 150, -1, ("start", 120), (30, 60)),
+                       ("Pigge", 150, -1, ("start", 120), (30, 60)),
+                       ("Gorie", 150, -1, ("start", 133.33), (30, 60)),
+                       ("Gorie", 150, -1, ("hp", 50), (0.07, 0.07)),
+                       ),
+                       6),
+    "Colombia": (40000, (("Doge", 150, -1, ("start", 0), (3.33, 10)),
+                         ("Snache", 150, -1, ("start", 13.33), (3.33, 10)),
+                         ("ThoseGuys", 150, -1, ("start", 6.67), (3.33, 10)),
+                         ("Croco", 150, -1, ("start", 80), (3.33, 10)),
+                         ("BBBunnies", 150, -1, ("start", 100), (3.33, 13.33)),
+                         ("BaaBaa", 150, -1, ("start", 100), (3.33, 20)),
+                         ("Hippoe", 150, -1, ("start", 120), (30, 60)),
+                         ("Pigge", 150, -1, ("start", 120), (30, 60)),
+                         ("KangRoo", 150, 1, ("start", 100), (0, 0)),
+                         ("KangRoo", 150, 1, ("start", 166.67), (0, 0)),
+                         ),
+                         4),
+    "Easter Island": (40000, (("ThoseGuys", 150, -1, ("start", 0), (1, 10)),
+                              ("Croco", 150, -1, ("start", 20), (10, 30)),
+                              ("SquireRels", 150, -1, ("start", 0), (1, 16.67)),
+                              ("OneHorn", 150, 1, ("start", 0), (0, 0)),
+                              ("OneHorn", 150, -2, ("hp", 80), (0, 0)),
+                              ),
+                              10),
+    "Hollywood": (40000, (("Hippoe", 150, -1, ("start", 0), (1, 2)),
+                         ("Pigge", 150, -1, ("start", 0), (1, 2)),
+                         ("JackiePeng", 150, -1, ("start", 40), (10, 20)),
+                         ("Gorie", 150, -1, ("start", 60), (13.33, 30)),
+                         ("SirSeal", 150, -1, ("start", 80), (40, 53.33)),
+                         ("Leboin", 150, -1, ("start", 100), (73.33, 113.33)),
+                         ("KangRoo", 150, -1, ("start", 120), (43.33, 80)),
+                         ("Mooth", 150, 1, ("start", 140), (0, 0)),
+                         ),
+                         2),
+    "Moon": (200000, (("ThoseGuys", 150, -1, ("start", 0), (0.13, 1)),
+                      ("Croco", 150, -1, ("start", 20), (0.27, 1.33)),
+                      ("BBBunnies", 150, -1, ("start", 20), (0.27, 1.33)),
+                      ("KangRoo", 150, -1, ("start", 0), (13.33, 60)),
+                      ("SirSeal", 150, -1, ("start", 0), (10, 40)),
+                      ("Mooth", 150, -1, ("start", 40), (60, 80)),
+                      ("Gorie", 150, -1, ("hp", 99), (6.67, 20)),
+                      ("Pigge", 150, -1, ("hp", 99), (6.67, 20)),
+                      ("ThoseGuys", 150, -1, ("hp", 99), (0.67, 2)),
+                      ("Mooth", 150, 4, ("hp", 99), (0.07, 0.07)),
+                      ("KangRoo", 150, 6, ("hp", 99), (0.07, 4)),
+                      ("SirSeal", 150, 6, ("hp", 99), (4, 13.33)),
+                      ("Gorie", 150, 10, ("hp", 99), (0.07, 1.33)),
+                      ("BunBun", 150, -2, ("hp", 70), (0, 0)),
+                      ),
+                      8)
 }
 
 # def playAudio(name):
@@ -72,12 +191,14 @@ keyPressedBoolean = [
 ]
 
 # list of cats on hotbar going into battle
-# name, level
-hotbar = [["NONE", 1], ["NONE", 1], ["NONE", 1], ["NONE", 1], ["NONE", 1], ["NONE", 1], ["NONE", 1], ["NONE", 1], ["NONE", 1], ["NONE", 1]]
+# name, level, cooldown timer
+hotbar = [["NONE", 1, 0], ["NONE", 1, 0], ["NONE", 1, 0], ["NONE", 1, 0], ["NONE", 1, 0], ["NONE", 1, 0], ["NONE", 1, 0], ["NONE", 1, 0], ["NONE", 1, 0], ["NONE", 1, 0]]
 
 # side = "cat" or "enemy", name = unit's name, level
 def deploy(side, name, level):
+    # hotbar slot time is current time - cooldown = => then can depoly
     deploySound.play()
+    # set hotbar list index thingy to current time
     print(f"{side};{name};{level}")
 
 def menuNav(direction):
@@ -88,6 +209,9 @@ richCatLevel = 0
 def upgradeRichCat():
     print("upgrade rich cat")
 
+# =================================
+# MAIN LOOP
+# =================================
 while True:
     screen.fill("red")
     pygame.display.update()
