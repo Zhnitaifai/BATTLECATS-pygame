@@ -1,4 +1,4 @@
-import pygame, sys
+import pygame, sys, time
 from pygame.locals import *
 
 pygame.init()
@@ -28,23 +28,26 @@ GAMESTATE = "START"
 '''
 # stats for all stages
 stages = {
-    # "name": (baseHP, ((Name, healthMultiplier, Amount[-1 for infinite, -2 for boss (only 1)], startTime(startEvent(e.g. boss, hp, start), seconds), interval(low, higher)), (other units)), maxNumberOfEnemies)
+    # "name": (baseHP, ((Name, healthMultiplier, Amount[-1 for infinite, -2 for boss (only 1)], startTime(startEvent(e.g. boss, hp, start), seconds), interval(low, higher)), (other units)), maxNumberOfEnemies, "background")
     "Korea": (1000, (("Doge", 150, 1, ("start", 0), (0, 0)), 
                      ("Doge", 150, -1, ("start", 20), (6, 10))
                     ),
-                    3),
+                    3,
+                    "Bg000.png"),
     "Cambodia": (1500, (("Doge", 150, -1, ("start", 0), (6, 10)), 
                         ("Snache", 150, -1, ("start", 0), (10, 26.67)), 
                         ("ThoseGuys", 150, -1, ("start", 0), (10, 26.67))
                         ),
-                        6),
+                        6,
+                        "Bg001.png"),
     "Singapore": (6000, (("Doge", 150, -1, ("start", 0), (4, 10)), 
                          ("Doge", 150, -1, ("start", 30), (6, 30)), 
                          ("Snache", 150, -1, ("start", 60), (10, 30)), 
                          ("ThoseGuys", 150, -1, ("start", 90), (10, 30)), 
                          ("ThoseGuys", 150, 20, ("hp", 60), (0.07, 0.13))
                         ),
-                        10),
+                        10,
+                        "Bg000.png"),
     "Dubai": (10000, (("Doge", 150, -1, ("start", 0), (6.67, 13.33)),
                       ("Snache", 150, -1, ("start", 20), (6.67, 13.33)),
                       ("ThoseGuys", 150, -1, ("start", 40), (6.67, 13.33)),
@@ -53,7 +56,8 @@ stages = {
                       ("ThoseGuys", 150, -1, ("hp", 88), (3.33 - 13.33)), 
                       ("JackiePeng", 150, 1, ("hp", 88), (0, 0)),
                     ), 
-                    12),
+                    12,
+                    "Bg005.png"),
     "South Africa": (14000, (("Doge", 150, -1, ("start", 0), (1, 10)),
                              ("Snache", 150, -1, ("start", 0), (1, 10)),
                              ("ThoseGuys", 150, -1, ("start", 0), (1, 10)),
@@ -63,7 +67,8 @@ stages = {
                              ("Hippoe", 150, -1, ("start", 133.33), (40, 60)),
                              ("JackiePeng", 150, 2, ("hp", 20), (0.5, 1))
                              ),
-                             10),
+                             10,
+                             "Bg002.png"),
     "Turkey": (20000, (("Doge", 150, -1, ("start", 0), (1, 10)),
                        ("Snache", 150, -1, ("start", 0), (1, 10)),
                        ("ThoseGuys", 150, -1, ("start", 0), (1, 10)),
@@ -73,7 +78,8 @@ stages = {
                        ("Gorie", 150, -1, ("start", 133.33), (60, 120)),
                        ("JackiePeng", 150, -1, ("start", 80), (60, 120)),
                        ),
-                       10),
+                       10,
+                       "Bg002.png"),
     "Monaco": (30000, (("Doge", 150, -1, ("start", 0), (1, 10)),
                        ("Snache", 150, -1, ("start", 0), (1, 10)),
                        ("ThoseGuys", 150, -1, ("start", 20), (1, 2)),
@@ -81,7 +87,8 @@ stages = {
                        ("BaaBaa", 150, -1, ("hp", 50), (4.33, 8)),
                        ("JackiePeng", 150, -1, ("hp", 50), (4.33, 8)),
                        ),
-                       5),
+                       5,
+                       "Bg005.png"),
     "Denmark": (36000, (("Doge", 150, -1, ("start", 0), (3.33, 30)),
                         ("Snache", 150, -1, ("start", 10), (10, 20)),
                         ("ThoseGuys", 150, -1, ("start", 20), (10, 10)),
@@ -90,7 +97,8 @@ stages = {
                         ("ThoseGuys", 150, -1, ("hp", 90), (0.07, 1)),
                         ("ThoseGuys", 150, 20, ("hp", 90), (0.07, 0.07)),
                         ),
-                        10),
+                        10,
+                        "Bg000.png"),
     "Canada": (36000, (("Snache", 150, -1, ("start", 10), (5, 6.67)),
                        ("ThoseGuys", 150, -1, ("start", 20), (6.67, 10)),
                        ("Croco", 150, -1, ("start", 40), (10, 20)),
@@ -103,7 +111,8 @@ stages = {
                        ("Gorie", 150, -1, ("start", 133.33), (30, 60)),
                        ("Gorie", 150, -1, ("hp", 50), (0.07, 0.07)),
                        ),
-                       6),
+                       6,
+                       "Bg000.png"),
     "Colombia": (40000, (("Doge", 150, -1, ("start", 0), (3.33, 10)),
                          ("Snache", 150, -1, ("start", 13.33), (3.33, 10)),
                          ("ThoseGuys", 150, -1, ("start", 6.67), (3.33, 10)),
@@ -115,14 +124,16 @@ stages = {
                          ("KangRoo", 150, 1, ("start", 100), (0, 0)),
                          ("KangRoo", 150, 1, ("start", 166.67), (0, 0)),
                          ),
-                         4),
+                         4,
+                         "Bg000.png"),
     "Easter Island": (40000, (("ThoseGuys", 150, -1, ("start", 0), (1, 10)),
                               ("Croco", 150, -1, ("start", 20), (10, 30)),
                               ("SquireRels", 150, -1, ("start", 0), (1, 16.67)),
                               ("OneHorn", 150, 1, ("start", 0), (0, 0)),
                               ("OneHorn", 150, -2, ("hp", 80), (0, 0)),
                               ),
-                              10),
+                              10,
+                              "Bg000.png"),
     "Hollywood": (40000, (("Hippoe", 150, -1, ("start", 0), (1, 2)),
                          ("Pigge", 150, -1, ("start", 0), (1, 2)),
                          ("JackiePeng", 150, -1, ("start", 40), (10, 20)),
@@ -132,7 +143,8 @@ stages = {
                          ("KangRoo", 150, -1, ("start", 120), (43.33, 80)),
                          ("Mooth", 150, 1, ("start", 140), (0, 0)),
                          ),
-                         2),
+                         2,
+                         "Bg000.png"),
     "Moon": (200000, (("ThoseGuys", 150, -1, ("start", 0), (0.13, 1)),
                       ("Croco", 150, -1, ("start", 20), (0.27, 1.33)),
                       ("BBBunnies", 150, -1, ("start", 20), (0.27, 1.33)),
@@ -148,7 +160,8 @@ stages = {
                       ("Gorie", 150, 10, ("hp", 99), (0.07, 1.33)),
                       ("BunBun", 150, -2, ("hp", 70), (0, 0)),
                       ),
-                      8)
+                      8,
+                      "Bg006.png")
 }
 
 # def playAudio(name):
@@ -205,9 +218,31 @@ def menuNav(direction):
     # for arrows
     print(f"menuNav: {direction}")
 
-richCatLevel = 0
-def upgradeRichCat():
-    print("upgrade rich cat")
+workerCatLevel = 0
+def upgradeWorkerCat():
+    print("upgrade worker cat")
+
+currentStage = "Korea"
+inStage = True
+currentMoney = 0
+currentEnemies = [] # times for finding intervals
+currentOpponentBaseHp= 0
+currentBaseHp = 0
+def playStage(currentStage):
+    for i in range(stages[currentStage][1].length):
+        currentEnemies.append([])
+    currentMoney = 0
+    richCatLevel = 0
+    currentOpponentBaseHp = stages[currentStage][0]
+    stageStartTime = time.time()
+    enterBattleSound.play()
+
+    while inStage:
+        for i in range(currentEnemies):
+            if int(time.time() - stageStartTime) in currentEnemies:
+                print()
+
+
 
 # =================================
 # MAIN LOOP
@@ -329,9 +364,12 @@ while True:
                     case "g":
                         deploy("cat", hotbar[9][0], hotbar[9][1])
                     case "tab":
-                        upgradeRichCat()
+                        upgradeWorkerCat()
                     case _:
                         blockSound.play()
+            if not inStage:
+                print()
+                
         case _:
             for every in currentKeyPresses:
                 match every[0]:
@@ -341,6 +379,7 @@ while True:
     # start screen -> go directly to cat base screen
         # only have START, UPGRADE, xp bar (top right)
     #     # If doing gacha add catfood, rare cat capcule button
+    
 
     # Gameplay
 
