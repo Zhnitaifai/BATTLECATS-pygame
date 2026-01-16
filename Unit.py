@@ -23,6 +23,8 @@ class Unit:
                 self.stats[i] = int(self.stats[i]) 
             self.health = int(self.stats[0]*(1+(self.level-1)*.2))
             self.attack = int(self.stats[1]*(1+(self.level-1)*.2))
+            self.knockback = self.stats[6]
+            self.knockbackCount = self.stats[6]-1
             self.walkAnimations = []
             for i in range(self.stats[7]):    
                 animation = pygame.image.load(f'Cats/{name}/Normal/Walk/frame_{i}.png')
@@ -42,6 +44,8 @@ class Unit:
                 self.stats[i] = int(self.stats[i]) 
             self.health = int(self.stats[0]*self.level/100)
             self.attack = int(self.stats[1]*self.level/100)
+            self.knockback = self.stats[6]
+            self.knockbackCount = self.stats[6]-1
             self.walkAnimations = []
             for i in range(self.stats[7]):    
                 animation = pygame.image.load(f'Enemies/{name}/Walk/frame_{i}.png')
@@ -98,12 +102,12 @@ class Unit:
                 self.state = "walk"
         self.xHitbox = self.x+(200 if self.type == 'cat' else 300)
         return {
-            "animation":self.currentAnimation, 
-            "displayPos":(self.x, self.y), 
-            "hitbox":(self.xHitbox, self.y), 
-            "attack?":attack, 
-            "damage":self.attack, 
-            "targets":targets
+            "animation": self.currentAnimation, 
+            "displayPos": (self.x, self.y), 
+            "hitbox": (self.xHitbox, self.y), 
+            "attack?": attack, 
+            "damage": self.attack, 
+            "targets": targets
         }
     
     def unitDetectionUpdate(self, positions):
@@ -134,9 +138,10 @@ class Unit:
     
     def takeDamage(self, damage):
         self.health -= damage
-        if self.type == 'cat':
-            print(self.health)
-        if self.health <= 0:
+        if self.health < self.stats[0]/self.knockback*self.knockbackCount:
+            self.x -= (-360 if self.type == 'cat' else 360)
+            self.knockbackCount -= 1
+        elif self.health <= 0:
             return True
         return False
             
