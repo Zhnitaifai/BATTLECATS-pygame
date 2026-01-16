@@ -81,13 +81,25 @@ while running: # the main game loop
             if event.key == pygame.K_ESCAPE:
                 running = False
             elif event.key == pygame.K_0:
-                deploy("cat", "Cat", "1", catAmt)
+                deploy("cat", "Cat", "10", catAmt)
                 catAmt += 1
             elif event.key == pygame.K_1:
                 deploy("notCat", "Doge", "150", enemyAmt)
                 enemyAmt += 1
             elif event.key == pygame.K_9:
-                deploy('cat', "Tank", "1", catAmt)
+                deploy('cat', "Tank", "10", catAmt)
+                catAmt += 1
+            elif event.key == pygame.K_8:
+                deploy('cat', "Axe", "10", catAmt)
+                catAmt += 1
+            elif event.key == pygame.K_7:
+                deploy('cat', "Gross", "10", catAmt)
+                catAmt += 1
+            elif event.key == pygame.K_6:
+                deploy('cat', "Cow", "10", catAmt)
+                catAmt += 1
+            elif event.key == pygame.K_5:
+                deploy('cat', "Bird", "10", catAmt)
                 catAmt += 1
 
     pygame.display.update()

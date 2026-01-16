@@ -29,11 +29,12 @@ class Unit:
             self.knockbackCount = self.stats[6]-1
             self.walkAnimations = []
             for i in range(self.stats[7]):    
-                animation = pygame.image.load(f'Cats/{name}/Normal/Walk/frame_{i}.png')
+                animation = pygame.image.load(f'Cats/{name}/{'Normal' if self.level < 10 else 'Evolved'}/Walk/frame_{i}.png')
                 self.walkAnimations.append(pygame.transform.scale(animation, (500, 350)))
             self.attackAnimations = []
+            # 26 if self.name != "Bird" and self.level >= 10 else 
             for i in range(self.stats[8]):    
-                animation = pygame.image.load(f'Cats/{name}/Normal/Attack/frame_{i}.png')
+                animation = pygame.image.load(f'Cats/{name}/{'Normal' if self.level < 10 else 'Evolved'}/Attack/frame_{i}.png')
                 self.attackAnimations.append(pygame.transform.scale(animation, (500, 350)))
             self.currentFrame = 0
             self.x = 1300
@@ -76,6 +77,8 @@ class Unit:
             else:
                 self.x += int(self.stats[3]/2)
         elif self.state == 'attack':
+            print(self.currentFrame)
+            print(len(self.attackAnimations))
             match self.attackState:
                 case "foreswing":
                     self.currentFrame += 1
@@ -126,11 +129,13 @@ class Unit:
         else:
             detectBox = Rect(self.xHitbox, self.y-400, self.stats[2], 1000)  
         for i in positions:
-            if detectBox.collidepoint(positions[i][0], positions[i][1]) and self.state not in ['attack', 'idle', 'knockback']:
+            if detectBox.collidepoint(positions[i][0], positions[i][1]) and self.state not in ['attack', 'knockback']:
                 self.state = ('attack' if self.attackCooldown == 0 else "idle")
                 self.currentFrame = 0
                 
                 return True, detectBox
+            elif self.state == 'idle':
+                self.state = 'walk'
         return False, detectBox
     
     def unitTargetUpdate(self, positions, attackType):
