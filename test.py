@@ -9,7 +9,7 @@ fpsClock = pygame.time.Clock()
 
 # set up the window
 DISPLAYSURF = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-pygame.display.set_caption('Animation')
+pygame.display.set_caption('Testing, attention please')
 
 WHITE = (255, 255, 255)
 catImgs = []
@@ -62,6 +62,7 @@ while running: # the main game loop
                 for i in display["targets"]:
                     if catDict[i].takeDamage(display["damage"]):
                         del catDict[i]
+                        del catPos[i]
     if len(catDict) > 0:
         for i in (catDict):
             catDict[i].unitDetectionUpdate(enemyPos)
