@@ -63,8 +63,6 @@ class Unit:
             self.xHitbox = self.x+200
             
     def unitUpdate(self, positions):
-        if self.type == 'cat':
-            print(self.state)
         attack = False
         targets = []
         self.attackCooldown -= (1 if self.attackCooldown > 0 else 0)
@@ -77,7 +75,7 @@ class Unit:
                 self.x -= int(self.stats[3]/2)
             else:
                 self.x += int(self.stats[3]/2)
-        if self.state == 'attack':
+        elif self.state == 'attack':
             match self.attackState:
                 case "foreswing":
                     self.currentFrame += 1
@@ -108,14 +106,14 @@ class Unit:
         if self.state == 'knockback':
             if self.knockbackFrame != 0:
                 self.x -= (-15 if self.type == 'cat' else 15)
-                self.currentAnimation = self.walkAnimations[0]
+                self.currentAnimation = pygame.transform.rotate(self.attackAnimations[0], (-45 if self.type == 'cat' else 45))
                 self.xHitbox = 0
                 self.knockbackFrame -= 1
             else:
                 self.state = 'walk'
         return {
             "animation": self.currentAnimation, 
-            "displayPos": (self.x, self.y), 
+            "displayPos": (self.x, self.y - (150 if self.state == 'knockback' else 0)), 
             "hitbox": (self.xHitbox, self.y), 
             "attack?": attack, 
             "damage": self.attack, 
@@ -128,7 +126,7 @@ class Unit:
         else:
             detectBox = Rect(self.xHitbox, self.y-400, self.stats[2], 1000)  
         for i in positions:
-            if detectBox.collidepoint(positions[i][0], positions[i][1]) and self.state != "attack" and self.state != 'idle':
+            if detectBox.collidepoint(positions[i][0], positions[i][1]) and self.state not in ['attack', 'idle', 'knockback']:
                 self.state = ('attack' if self.attackCooldown == 0 else "idle")
                 self.currentFrame = 0
                 

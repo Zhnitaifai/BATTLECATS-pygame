@@ -36,6 +36,7 @@ def deploy(type, name, level, Amt):
         enemyDict.update({f'{name}{enemyAmt+1}': new_unit})
         
 catPos = {}
+
 enemyPos = {}
 while running: # the main game loop
     DISPLAYSURF.blit(bg, (0, -420))
