@@ -30,15 +30,15 @@ class Unit:
             self.walkAnimations = []
             for i in range(self.stats[7]):    
                 animation = pygame.image.load(f'Cats/{name}/{'Normal' if self.level < 10 else 'Evolved'}/Walk/frame_{i}.png')
-                self.walkAnimations.append(pygame.transform.scale(animation, (500, 350)))
+                self.walkAnimations.append(pygame.transform.scale(animation, ((500, 350) if self.name != "Baha" else (750, 500))))
             self.attackAnimations = []
             # 26 if self.name == "Bird" and self.level >= 10 else 
             for i in range(26 if self.name == "Bird" and self.level >= 10 else self.stats[8]):    
                 animation = pygame.image.load(f'Cats/{name}/{'Normal' if self.level < 10 else 'Evolved'}/Attack/frame_{i}.png')
-                self.attackAnimations.append(pygame.transform.scale(animation, (500, 350)))
+                self.attackAnimations.append(pygame.transform.scale(animation, ((500, 350) if self.name != "Baha" else (750, 500))))
             self.currentFrame = 0
             self.x = 1300
-            self.y = random.randint(400, 450)
+            self.y = random.randint(*((400, 450) if self.name != "Baha" else (200, 250)))
             self.xHitbox = self.x+200
         elif type == 'notCat':
             self.stats = open(f'Enemies/{name}/stats.csv')
