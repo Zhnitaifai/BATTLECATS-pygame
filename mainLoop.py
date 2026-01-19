@@ -1,5 +1,6 @@
 import pygame, sys, time
 from pygame.locals import *
+import Unit
 
 pygame.init()
 
@@ -28,18 +29,20 @@ GAMESTATE = "START"
 '''
 # stats for all stages
 stages = {
-    # "name": (baseHP, ((Name, healthMultiplier, Amount[-1 for infinite, -2 for boss (only 1)], startTime(startEvent(e.g. boss, hp, start), seconds), interval(low, higher)), (other units)), maxNumberOfEnemies, "background")
+    # "name": (baseHP, ((Name, healthMultiplier, Amount[-1 for infinite, -2 for boss (only 1)], startTime(startEvent(e.g. boss, hp, start), seconds), interval(low, higher)), (other units)), maxNumberOfEnemies, "background", catLevel)
     "Korea": (1000, (("Doge", 150, 1, ("start", 0), (0, 0)), 
                      ("Doge", 150, -1, ("start", 20), (6, 10))
                     ),
                     3,
-                    "Bg000.png"),
+                    "Bg000.png", 
+                    1),
     "Cambodia": (1500, (("Doge", 150, -1, ("start", 0), (6, 10)), 
                         ("Snache", 150, -1, ("start", 0), (10, 26.67)), 
                         ("ThoseGuys", 150, -1, ("start", 0), (10, 26.67))
                         ),
                         6,
-                        "Bg001.png"),
+                        "Bg001.png", 
+                        2),
     "Singapore": (6000, (("Doge", 150, -1, ("start", 0), (4, 10)), 
                          ("Doge", 150, -1, ("start", 30), (6, 30)), 
                          ("Snache", 150, -1, ("start", 60), (10, 30)), 
@@ -47,7 +50,8 @@ stages = {
                          ("ThoseGuys", 150, 20, ("hp", 60), (0.07, 0.13))
                         ),
                         10,
-                        "Bg000.png"),
+                        "Bg000.png", 
+                        3),
     "Dubai": (10000, (("Doge", 150, -1, ("start", 0), (6.67, 13.33)),
                       ("Snache", 150, -1, ("start", 20), (6.67, 13.33)),
                       ("ThoseGuys", 150, -1, ("start", 40), (6.67, 13.33)),
@@ -57,7 +61,8 @@ stages = {
                       ("JackiePeng", 150, 1, ("hp", 88), (0, 0)),
                     ), 
                     12,
-                    "Bg005.png"),
+                    "Bg005.png", 
+                    3),
     "South Africa": (14000, (("Doge", 150, -1, ("start", 0), (1, 10)),
                              ("Snache", 150, -1, ("start", 0), (1, 10)),
                              ("ThoseGuys", 150, -1, ("start", 0), (1, 10)),
@@ -68,7 +73,8 @@ stages = {
                              ("JackiePeng", 150, 2, ("hp", 20), (0.5, 1))
                              ),
                              10,
-                             "Bg002.png"),
+                             "Bg002.png",
+                             4),
     "Turkey": (20000, (("Doge", 150, -1, ("start", 0), (1, 10)),
                        ("Snache", 150, -1, ("start", 0), (1, 10)),
                        ("ThoseGuys", 150, -1, ("start", 0), (1, 10)),
@@ -79,7 +85,8 @@ stages = {
                        ("JackiePeng", 150, -1, ("start", 80), (60, 120)),
                        ),
                        10,
-                       "Bg002.png"),
+                       "Bg002.png",
+                       5),
     "Monaco": (30000, (("Doge", 150, -1, ("start", 0), (1, 10)),
                        ("Snache", 150, -1, ("start", 0), (1, 10)),
                        ("ThoseGuys", 150, -1, ("start", 20), (1, 2)),
@@ -88,7 +95,8 @@ stages = {
                        ("JackiePeng", 150, -1, ("hp", 50), (4.33, 8)),
                        ),
                        5,
-                       "Bg005.png"),
+                       "Bg005.png",
+                       6),
     "Denmark": (36000, (("Doge", 150, -1, ("start", 0), (3.33, 30)),
                         ("Snache", 150, -1, ("start", 10), (10, 20)),
                         ("ThoseGuys", 150, -1, ("start", 20), (10, 10)),
@@ -98,7 +106,8 @@ stages = {
                         ("ThoseGuys", 150, 20, ("hp", 90), (0.07, 0.07)),
                         ),
                         10,
-                        "Bg000.png"),
+                        "Bg000.png",
+                        7),
     "Canada": (36000, (("Snache", 150, -1, ("start", 10), (5, 6.67)),
                        ("ThoseGuys", 150, -1, ("start", 20), (6.67, 10)),
                        ("Croco", 150, -1, ("start", 40), (10, 20)),
@@ -112,7 +121,8 @@ stages = {
                        ("Gorie", 150, -1, ("hp", 50), (0.07, 0.07)),
                        ),
                        6,
-                       "Bg000.png"),
+                       "Bg000.png",
+                       8),
     "Colombia": (40000, (("Doge", 150, -1, ("start", 0), (3.33, 10)),
                          ("Snache", 150, -1, ("start", 13.33), (3.33, 10)),
                          ("ThoseGuys", 150, -1, ("start", 6.67), (3.33, 10)),
@@ -125,7 +135,8 @@ stages = {
                          ("KangRoo", 150, 1, ("start", 166.67), (0, 0)),
                          ),
                          4,
-                         "Bg000.png"),
+                         "Bg000.png",
+                         9),
     "Easter Island": (40000, (("ThoseGuys", 150, -1, ("start", 0), (1, 10)),
                               ("Croco", 150, -1, ("start", 20), (10, 30)),
                               ("SquireRels", 150, -1, ("start", 0), (1, 16.67)),
@@ -133,7 +144,8 @@ stages = {
                               ("OneHorn", 150, -2, ("hp", 80), (0, 0)),
                               ),
                               10,
-                              "Bg000.png"),
+                              "Bg000.png",
+                              10),
     "Hollywood": (40000, (("Hippoe", 150, -1, ("start", 0), (1, 2)),
                          ("Pigge", 150, -1, ("start", 0), (1, 2)),
                          ("JackiePeng", 150, -1, ("start", 40), (10, 20)),
@@ -144,7 +156,8 @@ stages = {
                          ("Mooth", 150, 1, ("start", 140), (0, 0)),
                          ),
                          2,
-                         "Bg000.png"),
+                         "Bg000.png",
+                         10),
     "Moon": (200000, (("ThoseGuys", 150, -1, ("start", 0), (0.13, 1)),
                       ("Croco", 150, -1, ("start", 20), (0.27, 1.33)),
                       ("BBBunny", 150, -1, ("start", 20), (0.27, 1.33)),
@@ -161,7 +174,8 @@ stages = {
                       ("BunBun", 150, -2, ("hp", 70), (0, 0)),
                       ),
                       8,
-                      "Bg006.png")
+                      "Bg006.png",
+                      10)
 }
 
 # def playAudio(name):
@@ -204,12 +218,24 @@ keyPressedBoolean = [
 ]
 
 # list of cats on hotbar going into battle
-# name, level, cooldown timer
-hotbar = [["NONE", 1, 0], ["NONE", 1, 0], ["NONE", 1, 0], ["NONE", 1, 0], ["NONE", 1, 0], ["NONE", 1, 0], ["NONE", 1, 0], ["NONE", 1, 0], ["NONE", 1, 0], ["NONE", 1, 0]]
-
+# name, cooldown timer
+hotbar = [["Cat", 60], ["Tank", 60], ["Axe", 60], ["Gross", 66], ["Cow", 60], ["Bird", 60], ["Fish", 126], ["Lizard", 306], ["Titan", 546], ["Baha", 3000]]
+catCooldowns = {
+    "Cat": 0, 
+    "Tank": 0, 
+    "Axe": 0, 
+    "Gross": 0, 
+    "Cow": 0, 
+    "Bird": 0, 
+    "Fish": 0, 
+    "Lizard": 0, 
+    "Titan": 0, 
+    "Baha": 0
+}
 # side = "cat" or "enemy", name = unit's name, level
 def deploy(side, name, level):
     # hotbar slot time is current time - cooldown = => then can depoly
+    
     deploySound.play()
     # set hotbar list index thingy to current time
     print(f"{side};{name};{level}")
@@ -341,28 +367,29 @@ while True:
     print(currentKeyPresses)
     match GAMESTATE:
         case "STAGE":
+            catLevel = stages[currentStage][4]
             for every in currentKeyPresses:
                 match every[0]:
                     case "q":
-                        deploy("cat", hotbar[0][0], hotbar[0][1])
+                        deploy("cat", hotbar[0][0], catLevel)
                     case "w":
-                        deploy("cat", hotbar[1][0], hotbar[1][1])
+                        deploy("cat", hotbar[1][0], catLevel)
                     case "e":
-                        deploy("cat", hotbar[2][0], hotbar[2][1])
+                        deploy("cat", hotbar[2][0], catLevel)
                     case "r":
-                        deploy("cat", hotbar[3][0], hotbar[3][1])
+                        deploy("cat", hotbar[3][0], catLevel)
                     case "t":
-                        deploy("cat", hotbar[4][0], hotbar[4][1])
+                        deploy("cat", hotbar[4][0], catLevel)
                     case "a":
-                        deploy("cat", hotbar[5][0], hotbar[5][1])
+                        deploy("cat", hotbar[5][0], catLevel)
                     case "s":
-                        deploy("cat", hotbar[6][0], hotbar[6][1])
+                        deploy("cat", hotbar[6][0], catLevel)
                     case "d":
-                        deploy("cat", hotbar[7][0], hotbar[7][1])
+                        deploy("cat", hotbar[7][0], catLevel)
                     case "f":
-                        deploy("cat", hotbar[8][0], hotbar[8][1])
+                        deploy("cat", hotbar[8][0], catLevel)
                     case "g":
-                        deploy("cat", hotbar[9][0], hotbar[9][1])
+                        deploy("cat", hotbar[9][0], catLevel)
                     case "tab":
                         upgradeWorkerCat()
                     case _:

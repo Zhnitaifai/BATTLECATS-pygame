@@ -153,13 +153,13 @@ class Unit:
     
     def takeDamage(self, damage):
         self.health -= damage
-        if self.health <= 0:
-            return True
-        elif self.knockbackCount != 0:
+        if self.knockbackCount != 0:
             if self.health < self.stats[0]/self.knockback*self.knockbackCount:
                 self.state = 'knockback'
                 self.knockbackCount -= 1
                 self.knockbackFrame = 24
+        if self.health <= 0:
+            return True
         return False
             
             
