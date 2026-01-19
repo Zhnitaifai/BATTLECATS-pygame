@@ -52,15 +52,15 @@ class Unit:
             self.walkAnimations = []
             for i in range(self.stats[7]):    
                 animation = pygame.image.load(f'Enemies/{name}/Walk/frame_{i}.png')
-                self.walkAnimations.append(pygame.transform.scale(animation, (500, 350)))
+                self.walkAnimations.append(pygame.transform.scale(animation, ((500, 350) if self.name != "BunBun" else (750, 500))))
             self.attackAnimations = []
             for i in range(self.stats[8]):    
                 animation = pygame.image.load(f'Enemies/{name}/Attack/frame_{i}.png')
-                self.attackAnimations.append(pygame.transform.scale(animation, (500, 350)))
+                self.attackAnimations.append(pygame.transform.scale(animation, ((500, 350) if self.name != "BunBun" else (750, 500))))
             self.currentFrame = 0
             self.currentAnimation = 0
             self.x = 200
-            self.y = random.randint(400, 450)
+            self.y = random.randint(*((400, 450) if self.name != "BunBun" else (200, 250)))
             self.xHitbox = self.x+200
             
     def unitUpdate(self, positions):
@@ -143,7 +143,7 @@ class Unit:
         if self.type == 'cat':
             detectBox = Rect(self.xHitbox-self.stats[2], self.y-400, self.stats[2], 1000)    
         else:
-            detectBox = Rect(self.xHitbox, self.y-400, self.stats[2], 1000)  
+            detectBox = Rect(self.xHitbox, self.y-600, self.stats[2], 1000)  
         for i in positions:
             if detectBox.collidepoint(positions[i][0], positions[i][1]):
                 targets.append(i)
@@ -153,13 +153,13 @@ class Unit:
     
     def takeDamage(self, damage):
         self.health -= damage
-        if self.knockbackCount != 0:
+        if self.health <= 0:
+            return True
+        elif self.knockbackCount != 0:
             if self.health < self.stats[0]/self.knockback*self.knockbackCount:
                 self.state = 'knockback'
                 self.knockbackCount -= 1
                 self.knockbackFrame = 24
-        elif self.health <= 0:
-            return True
         return False
             
             
