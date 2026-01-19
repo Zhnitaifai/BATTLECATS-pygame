@@ -84,7 +84,7 @@ while running: # the main game loop
                 deploy("cat", "Cat", "10", catAmt)
                 catAmt += 1
             elif event.key == pygame.K_1:
-                deploy("notCat", "Doge", "150", enemyAmt)
+                deploy("notCat", "BBBunny", "150", enemyAmt)
                 enemyAmt += 1
             elif event.key == pygame.K_9:
                 deploy('cat', "Tank", "10", catAmt)
@@ -100,6 +100,15 @@ while running: # the main game loop
                 catAmt += 1
             elif event.key == pygame.K_5:
                 deploy('cat', "Bird", "10", catAmt)
+                catAmt += 1
+            elif event.key == pygame.K_4:
+                deploy('cat', "Fish", "10", catAmt)
+                catAmt += 1
+            elif event.key == pygame.K_3:
+                deploy('cat', "Lizard", "10", catAmt)
+                catAmt += 1
+            elif event.key == pygame.K_2:
+                deploy('cat', "Titan", "10", catAmt)
                 catAmt += 1
 
     pygame.display.update()

@@ -32,8 +32,8 @@ class Unit:
                 animation = pygame.image.load(f'Cats/{name}/{'Normal' if self.level < 10 else 'Evolved'}/Walk/frame_{i}.png')
                 self.walkAnimations.append(pygame.transform.scale(animation, (500, 350)))
             self.attackAnimations = []
-            # 26 if self.name != "Bird" and self.level >= 10 else 
-            for i in range(self.stats[8]):    
+            # 26 if self.name == "Bird" and self.level >= 10 else 
+            for i in range(26 if self.name == "Bird" and self.level >= 10 else self.stats[8]):    
                 animation = pygame.image.load(f'Cats/{name}/{'Normal' if self.level < 10 else 'Evolved'}/Attack/frame_{i}.png')
                 self.attackAnimations.append(pygame.transform.scale(animation, (500, 350)))
             self.currentFrame = 0
