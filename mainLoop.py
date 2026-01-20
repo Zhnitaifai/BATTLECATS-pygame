@@ -1,16 +1,17 @@
 import pygame, sys, time
 from pygame.locals import *
 import Unit
+import time
 
 pygame.init()
 
 fps = 30
 fpsClock = pygame.time.Clock()
 
-screen = pygame.display.set_mode((500, 500))
+screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption('BATTLE CATS')
 
-GAMESTATE = "START"
+GAMESTATE = "STAGE"
 '''
     GAME STATES:
     - MENU
@@ -22,8 +23,6 @@ GAMESTATE = "START"
         - start level from start
     - PAUSE
         - pauses menu, only during play state
-    - RESUME
-        - unpauses
     - END
         - end screen (Rewards)
 '''
@@ -179,22 +178,24 @@ stages = {
 }
 
 # def playAudio(name):
-attackSound = pygame.mixer.Sound('Music/bcAttack.ogg')
-attackBaseSound = pygame.mixer.Sound('Music/bcAttackBase.ogg')
-blockSound = pygame.mixer.Sound('Music/bcBlock.ogg')
-bossShockwaveSound = pygame.mixer.Sound('Music/bcBossShockwave.ogg')
-clickSound = pygame.mixer.Sound('Music/bcClick.ogg')
-defeatSound = pygame.mixer.Sound('Music/bcDefeat.ogg')
-deploySound = pygame.mixer.Sound('Music/bcDeploy.ogg')
-enterBattleSound = pygame.mixer.Sound('Music/bcEnterBattle.ogg')
-rewardSound = pygame.mixer.Sound('Music/bcReward.ogg')
-scrollingSound = pygame.mixer.Sound('Music/bcScrolling.ogg')
-unitDiesSound = pygame.mixer.Sound('Music/bcUnitDies.ogg')
-unitRecharged = pygame.mixer.Sound('Music/bcUnitRecharge.ogg')
-victory = pygame.mixer.Sound('Music/bcVictory.ogg')
+attackSound = pygame.mixer.Sound('Sounds/bcAttack.ogg')
+attackBaseSound = pygame.mixer.Sound('Sounds/bcAttackBase.ogg')
+blockSound = pygame.mixer.Sound('Sounds/bcBlock.ogg')
+bossShockwaveSound = pygame.mixer.Sound('Sounds/bcBossShockwave.ogg')
+clickSound = pygame.mixer.Sound('Sounds/bcClick.ogg')
+defeatSound = pygame.mixer.Sound('Sounds/bcDefeat.ogg')
+deploySound = pygame.mixer.Sound('Sounds/bcDeploy.ogg')
+enterBattleSound = pygame.mixer.Sound('Sounds/bcEnterBattle.ogg')
+rewardSound = pygame.mixer.Sound('Sounds/bcReward.ogg')
+scrollingSound = pygame.mixer.Sound('Sounds/bcScrolling.ogg')
+unitDiesSound = pygame.mixer.Sound('Sounds/bcUnitDies.ogg')
+unitRecharged = pygame.mixer.Sound('Sounds/bcUnitRecharge.ogg')
+victory = pygame.mixer.Sound('Sounds/bcVictory.ogg')
+
+normalBattleMusic = pygame.mixer.Sound('Music/bcBattle1.ogg')
 
 # pygame.mixer.music.play(-1, 0.0) #-1: play forever, 0.0 = starting point
-backgroundMusicPlaying = True
+backgroundMusicPlaying = False
 
 # Controls
 hotBarSwitch = 1 #1st row = 1, 2nd row = 2
@@ -235,10 +236,22 @@ catCooldowns = {
 # side = "cat" or "enemy", name = unit's name, level
 def deploy(side, name, level):
     # hotbar slot time is current time - cooldown = => then can depoly
-    
-    deploySound.play()
+    new_unit = Unit.Unit(side, name, level)
+    if side == 'cat' and len(catDict) < 50:
+        if catCooldowns[name] == 0:
+            catDict.update({f'{name}{catAmt+1}': new_unit})
+            for i in hotbar:
+                if i[0] == name:
+                    catCooldowns[name] = i[1]
+                    break
+            deploySound.play()
+            return True
+        else:
+            blockSound.play()
+    else: 
+        enemyDict.update({f'{name}{enemyAmt+1}': new_unit})
+    return False
     # set hotbar list index thingy to current time
-    print(f"{side};{name};{level}")
 
 def menuNav(direction):
     # for arrows
@@ -247,6 +260,10 @@ def menuNav(direction):
 workerCatLevel = 0
 def upgradeWorkerCat():
     print("upgrade worker cat")
+    
+def isPressed(key):
+    if key[1]:
+        return True
 
 currentStage = "Korea"
 inStage = True
@@ -254,30 +271,92 @@ currentMoney = 0
 currentEnemies = [] # times for finding intervals
 currentOpponentBaseHp= 0
 currentBaseHp = 0
-def playStage(currentStage):
-    for i in range(stages[currentStage][1].length):
-        currentEnemies.append([])
-    currentMoney = 0
-    richCatLevel = 0
-    currentOpponentBaseHp = stages[currentStage][0]
-    stageStartTime = time.time()
-    enterBattleSound.play()
+catDict = {}
+enemyDict = {}
+catAmt = 0
+enemyAmt = 0
+catPos = {}
+enemyPos = {}
+# def playStage(currentStage):
+#     for i in range(stages[currentStage][1].length):
+#         currentEnemies.append([])
+#     currentMoney = 0
+#     richCatLevel = 0
+#     currentOpponentBaseHp = stages[currentStage][0]
+#     stageStartTime = time.time()
+#     enterBattleSound.play()
 
-    while inStage:
-        for i in range(currentEnemies):
-            if int(time.time() - stageStartTime) in currentEnemies:
-                print()
+#     while inStage:
+#         for i in range(currentEnemies):
+#             if int(time.time() - stageStartTime) in currentEnemies:
+#                 print()
 
 
 
 # =================================
 # MAIN LOOP
 # =================================
+enterBattleSound.play()
 while True:
+    if not backgroundMusicPlaying:
+        normalBattleMusic.play(-1)
+        backgroundMusicPlaying = True
     screen.fill("red")
-    pygame.display.update()
+    catPos = {}
+    if len(catDict) > 0:
+        print(len(catDict))
+    if len(catDict) > 0:
+        for i in (catDict):
+            display = catDict[i].unitUpdate(enemyPos)
+            catPos.update({i: display["hitbox"]})
+            screen.blit(display["animation"], display["displayPos"])
+            catDict[i].unitDetectionUpdate(enemyPos)
+            if display["attack?"]:
+                for i in display["targets"]:
+                    if enemyDict[i].takeDamage(display["damage"]):
+                        del enemyDict[i]
+                        del enemyPos[i]
+    enemyPos = {}
+    if len(enemyDict) > 0:
+        for i in (enemyDict):
+            display = enemyDict[i].unitUpdate(catPos)
+            enemyPos.update({i: display["hitbox"]})
+            screen.blit(display["animation"], display["displayPos"])
+            enemyDict[i].unitDetectionUpdate(catPos)
+            if display["attack?"]:
+                for i in display["targets"]:
+                    if catDict[i].takeDamage(display["damage"]):
+                        del catDict[i]
+                        del catPos[i]
+    if len(catDict) > 0:
+        for i in (catDict):
+            catDict[i].unitDetectionUpdate(enemyPos)
+    if len(enemyDict) > 0:
+        for i in (enemyDict):
+            enemyDict[i].unitDetectionUpdate(catPos)
 
+    for i in catCooldowns:
+        if catCooldowns[i] > 0:
+            catCooldowns[i] -= 1
     # key press detection
+    keyPressedBoolean = [
+        ["q", False],
+        ["w", False],
+        ["e", False],
+        ["r", False],
+        ["t", False],
+        ["a", False],
+        ["s", False],
+        ["d", False],
+        ["f", False],
+        ["g", False],
+        ["enter", False],
+        ["uarrow", False],
+        ["darrow", False],
+        ["larrow", False],
+        ["rarrow", False],
+        ["tab", False],
+    ]
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()
@@ -287,75 +366,42 @@ while True:
             # ASDFG
             # general navigation w/ enter & arrow keys
             if event.key == K_q:
-                keyPressedBoolean[0] = True
+                keyPressedBoolean[0][1] = True
             if event.key == K_w:
-                keyPressedBoolean[1] = True
+                keyPressedBoolean[1][1] = True
             if event.key == K_e:
-                keyPressedBoolean[2] = True
+                keyPressedBoolean[2][1] = True
             if event.key == K_r:
-                keyPressedBoolean[3] = True
+                keyPressedBoolean[3][1] = True
             if event.key == K_t:
-                keyPressedBoolean[4] = True
+                keyPressedBoolean[4][1] = True
             if event.key == K_a:
-                keyPressedBoolean[5] = True
+                keyPressedBoolean[5][1] = True
             if event.key == K_s:
-                keyPressedBoolean[6] = True
+                keyPressedBoolean[6][1] = True
             if event.key == K_d:
-                keyPressedBoolean[7] = True
+                keyPressedBoolean[7][1] = True
             if event.key == K_f:
-                keyPressedBoolean[8] = True
+                keyPressedBoolean[8][1] = True
             if event.key == K_g:
-                keyPressedBoolean[9] = True
+                keyPressedBoolean[9][1] = True
             if event.key == K_RETURN:
-                keyPressedBoolean[10] = True
+                keyPressedBoolean[10][1] = True
             if event.key == K_UP:
-                keyPressedBoolean[11] = True
+                keyPressedBoolean[11][1] = True
             if event.key == K_DOWN:
-                keyPressedBoolean[12] = True
+                keyPressedBoolean[12][1] = True
             if event.key == K_LEFT:
-                keyPressedBoolean[13] = True
+                keyPressedBoolean[13][1] = True
             if event.key == K_RIGHT:
-                keyPressedBoolean[14] = True
+                keyPressedBoolean[14][1] = True
             if event.key == K_TAB:
-                keyPressedBoolean[15] = True
-        if event.type == KEYUP:
-            # for resetting
-            if event.key == K_q:
-                keyPressedBoolean[0] = False
-            if event.key == K_w:
-                keyPressedBoolean[1] = False
-            if event.key == K_e:
-                keyPressedBoolean[2] = False
-            if event.key == K_r:
-                keyPressedBoolean[3] = False
-            if event.key == K_t:
-                keyPressedBoolean[4] = False
-            if event.key == K_a:
-                keyPressedBoolean[5] = False
-            if event.key == K_s:
-                keyPressedBoolean[6] = False
-            if event.key == K_d:
-                keyPressedBoolean[7] = False
-            if event.key == K_f:
-                keyPressedBoolean[8] = False
-            if event.key == K_g:
-                keyPressedBoolean[9] = False
-            if event.key == K_RETURN:
-                keyPressedBoolean[10] = False
-            if event.key == K_UP:
-                keyPressedBoolean[11] = False
-            if event.key == K_DOWN:
-                keyPressedBoolean[12] = False
-            if event.key == K_LEFT:
-                keyPressedBoolean[13] = False
-            if event.key == K_RIGHT:
-                keyPressedBoolean[14] = False
-            if event.key == K_TAB:
-                keyPressedBoolean[15] = False
+                keyPressedBoolean[15][1] = True
+                
             # for exitting program /w keyboard shortcut
             if event.key == K_ESCAPE:
                 if GAMESTATE == "PAUSE":
-                    GAMESTATE = "RESUME"
+                    GAMESTATE = "STAGE"
                 else:
                     GAMESTATE = "PAUSE"
                 print(GAMESTATE)
@@ -363,33 +409,32 @@ while True:
                 pygame.quit()   
                 sys.exit()
 
-    currentKeyPresses = list(filter(lambda value: value, keyPressedBoolean))
-    print(currentKeyPresses)
+    currentKeyPresses = list(filter(isPressed, keyPressedBoolean))
     match GAMESTATE:
         case "STAGE":
             catLevel = stages[currentStage][4]
             for every in currentKeyPresses:
                 match every[0]:
                     case "q":
-                        deploy("cat", hotbar[0][0], catLevel)
+                        catAmt += (1 if deploy("cat", hotbar[0][0], catLevel) else 0)
                     case "w":
-                        deploy("cat", hotbar[1][0], catLevel)
+                        catAmt += (1 if deploy("cat", hotbar[1][0], catLevel) else 0)
                     case "e":
-                        deploy("cat", hotbar[2][0], catLevel)
+                        catAmt += (1 if deploy("cat", hotbar[2][0], catLevel) else 0)
                     case "r":
-                        deploy("cat", hotbar[3][0], catLevel)
+                        catAmt += (1 if deploy("cat", hotbar[3][0], catLevel) else 0)
                     case "t":
-                        deploy("cat", hotbar[4][0], catLevel)
+                        catAmt += (1 if deploy("cat", hotbar[4][0], catLevel) else 0)
                     case "a":
-                        deploy("cat", hotbar[5][0], catLevel)
+                        catAmt += (1 if deploy("cat", hotbar[5][0], catLevel) else 0)
                     case "s":
-                        deploy("cat", hotbar[6][0], catLevel)
+                        catAmt += (1 if deploy("cat", hotbar[6][0], catLevel) else 0)
                     case "d":
-                        deploy("cat", hotbar[7][0], catLevel)
+                        catAmt += (1 if deploy("cat", hotbar[7][0], catLevel) else 0)
                     case "f":
-                        deploy("cat", hotbar[8][0], catLevel)
+                        catAmt += (1 if deploy("cat", hotbar[8][0], catLevel) else 0)
                     case "g":
-                        deploy("cat", hotbar[9][0], catLevel)
+                        catAmt += (1 if deploy("cat", hotbar[9][0], catLevel) else 0)
                     case "tab":
                         upgradeWorkerCat()
                     case _:
@@ -397,11 +442,6 @@ while True:
             if not inStage:
                 print()
                 
-        case _:
-            for every in currentKeyPresses:
-                match every[0]:
-                    case "":
-                        print()
         
     # start screen -> go directly to cat base screen
         # only have START, UPGRADE, xp bar (top right)

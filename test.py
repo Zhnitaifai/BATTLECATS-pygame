@@ -27,7 +27,7 @@ enemyDict = {}
 catAmt = 0
 enemyAmt = 0
 
-def deploy(type, name, level, Amt):
+def deploy(type, name, level):
     new_unit = Unit(type, name, level)
     if type == 'cat':
         catDict.update({f'{name}{catAmt+1}': new_unit})
@@ -41,6 +41,7 @@ enemyPos = {}
 while running: # the main game loop
     DISPLAYSURF.blit(bg, (0, -420))
     catPos = {}
+    print(catDict)
     if len(catDict) > 0:
         for i in (catDict):
             display = catDict[i].unitUpdate(enemyPos)
@@ -70,9 +71,6 @@ while running: # the main game loop
     if len(enemyDict) > 0:
         for i in (enemyDict):
             enemyDict[i].unitDetectionUpdate(catPos)
-    frame += 1
-    if frame > 16:
-        frame = 0
     for event in pygame.event.get():
         if event.type == QUIT:
             running = False
@@ -81,34 +79,34 @@ while running: # the main game loop
             if event.key == pygame.K_ESCAPE:
                 running = False
             elif event.key == pygame.K_0:
-                deploy("cat", "Baha", "10", catAmt)
+                deploy("cat", "Baha", "10")
                 catAmt += 1
             elif event.key == pygame.K_1:
-                deploy("notCat", "BunBun", "150", enemyAmt)
+                deploy("notCat", "BunBun", "150")
                 enemyAmt += 1
             elif event.key == pygame.K_9:
-                deploy('cat', "Tank", "10", catAmt)
+                deploy('cat', "Tank", "10")
                 catAmt += 1
             elif event.key == pygame.K_8:
-                deploy('cat', "Axe", "10", catAmt)
+                deploy('cat', "Axe", "10")
                 catAmt += 1
             elif event.key == pygame.K_7:
-                deploy('cat', "Gross", "10", catAmt)
+                deploy('cat', "Gross", "10")
                 catAmt += 1
             elif event.key == pygame.K_6:
-                deploy('cat', "Cow", "10", catAmt)
+                deploy('cat', "Cow", "10")
                 catAmt += 1
             elif event.key == pygame.K_5:
-                deploy('cat', "Bird", "10", catAmt)
+                deploy('cat', "Bird", "10")
                 catAmt += 1
             elif event.key == pygame.K_4:
-                deploy('cat', "Fish", "10", catAmt)
+                deploy('cat', "Fish", "10")
                 catAmt += 1
             elif event.key == pygame.K_3:
-                deploy('cat', "Lizard", "10", catAmt)
+                deploy('cat', "Lizard", "10")
                 catAmt += 1
             elif event.key == pygame.K_2:
-                deploy('cat', "Titan", "10", catAmt)
+                deploy('cat', "Titan", "10")
                 catAmt += 1
 
     pygame.display.update()
