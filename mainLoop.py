@@ -9,7 +9,7 @@ fpsClock = pygame.time.Clock()
 screen = pygame.display.set_mode((500, 500))
 pygame.display.set_caption('BATTLE CATS')
 
-GAMESTATE = "START"
+GAMESTATE = "STAGE"
 '''
     GAME STATES:
     - MENU
@@ -222,30 +222,65 @@ workerCatLevel = 0
 def upgradeWorkerCat():
     print("upgrade worker cat")
 
+def hpTriggerCheck(value):
+    if value == "hp":
+        True
+
 currentStage = "Korea"
 inStage = True
 currentMoney = 0
-currentEnemies = [] # times for finding intervals
+enemies = [
+    [startTime, lastTime, interval]
+] # times for finding intervals
+# startTime = "start", "hp", "boss"
 currentOpponentBaseHp= 0
 currentBaseHp = 0
-def playStage(currentStage):
+# def playStage(currentStage):
+#     for i in range(stages[currentStage][1].length):
+#         enemies.append([])
+#     currentMoney = 0
+#     richCatLevel = 0
+#     currentOpponentBaseHp = stages[currentStage][0]
+#     stageStartTime = time.time()
+#     enterBattleSound.play()
+
+#     while inStage:
+#         for i in range(enemies):
+#             if int(time.time() - stageStartTime) in enemies:
+#                 print()
+numOfEnemies = 0
+STAGESTAGE = 0
+STAGESTATES = ["start"]
+'''
+    "start"
+    "hp"
+    "boss"
+'''
+boss = False
+listOfBasehps = [[], [], []]
+def basehpcheck(value):
+    if value[3][0] == "hp":
+        return True
+def initStage(currentStage):
     for i in range(stages[currentStage][1].length):
-        currentEnemies.append([])
+        enemies.append([])
     currentMoney = 0
     richCatLevel = 0
     currentOpponentBaseHp = stages[currentStage][0]
+    numOfEnemies = 0
     stageStartTime = time.time()
+    STAGESTAGE = 0
+    STAGESTATES = "STAGE"
+    boss = False
     enterBattleSound.play()
 
-    while inStage:
-        for i in range(currentEnemies):
-            if int(time.time() - stageStartTime) in currentEnemies:
-                print()
+    listOfBasehps = list(filter(basehpcheck, stages[currentStage][1]))[3][1] # gets 0-100 values
 
+    return enemies
 
 
 # =================================
-# MAIN LOOP
+#            MAIN LOOP
 # =================================
 while True:
     screen.fill("red")
@@ -367,9 +402,31 @@ while True:
                         upgradeWorkerCat()
                     case _:
                         blockSound.play()
-            if not inStage:
-                print()
-                
+            if inStage:
+                if STAGESTAGE == 0: #done
+                    enemies = initStage()
+                if listOfBasehps: #done
+                    if listOfBasehps[0] > currentBaseHp/stages[currentStage][0]*100 > listOfBasehps[1]:
+                        currentHpEnemies = list(filter(hpTriggerCheck, enemies))
+                        for i in currentHpEnemies:
+                            currentEnemies.append(i)
+                        del listOfBasehps[0]
+                if "boss" in STAGESTATES: #done
+                    STAGESTATES = "boss"
+                    lastBossTime = time.time()
+                currentEnemies = list(filter(lambda enemy: enemy[2] == "start" and enemy[]-enemy[2] == time.time(), enemies))
+                match STAGESTATES:
+                    case "start":
+                        currentEnemies = list(filter(lambda enemy: enemy[2] == "start" and enemy[]-enemy[2] == time.time(), enemies))
+                    case "hp":
+                        currentEnemies = list(filter(lambda enemy: enemy[2] == "hp" and enemy[]-enemy[2] == time.time(), enemies))
+                    case "boss":
+                        currentEnemies = list(filter(lambda enemy: enemy[2] == "boss" and enemy[]-enemy[2] == time.time(), enemies))
+                if currentEnemies and numOfEnemies<=stages[2]: # checks if list is empty and is under enemy unit cap
+                    for i in range(currentEnemies):
+                        deploy("enemy", currentEnemies[0], currentEnemies[1])
+                STAGESTAGE += 1
+                    
         case _:
             for every in currentKeyPresses:
                 match every[0]:
