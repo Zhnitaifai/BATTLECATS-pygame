@@ -269,57 +269,30 @@ def hpTriggerCheck(value):
     if value == "hp":
         True
 
+# level init variables
 currentStage = "Korea"
 inStage = True
 currentMoney = 0
-enemies = [
-    [startTime, lastTime, interval]
-] # times for finding intervals
-# startTime = "start", "hp", "boss"
+enemies = [] # times for finding intervals
 currentOpponentBaseHp= 0
 currentBaseHp = 0
-<<<<<<< HEAD
-# def playStage(currentStage):
-#     for i in range(stages[currentStage][1].length):
-#         enemies.append([])
-=======
+numOfEnemies = 0
+stageStartTime = time.time()
+lastHpTime = time.time()
+STAGESTAGE = 0
+STAGESTATES = ["start"] #"start", "hp", "boss"
+boss = False
+listOfBasehps = []
+
 catDict = {}
 enemyDict = {}
-catAmt = 0
-enemyAmt = 0
-catPos = {}
-enemyPos = {}
-# def playStage(currentStage):
-#     for i in range(stages[currentStage][1].length):
-#         currentEnemies.append([])
->>>>>>> origin/unitClassmaking
-#     currentMoney = 0
-#     richCatLevel = 0
-#     currentOpponentBaseHp = stages[currentStage][0]
-#     stageStartTime = time.time()
-#     enterBattleSound.play()
-<<<<<<< HEAD
 
-#     while inStage:
-#         for i in range(enemies):
-#             if int(time.time() - stageStartTime) in enemies:
-#                 print()
-numOfEnemies = 0
-STAGESTAGE = 0
-STAGESTATES = ["start"]
-'''
-    "start"
-    "hp"
-    "boss"
-'''
-boss = False
-listOfBasehps = [[], [], []]
 def basehpcheck(value):
     if value[3][0] == "hp":
         return True
 def initStage(currentStage):
-    for i in range(stages[currentStage][1].length):
-        enemies.append([])
+    for i in stages[currentStage][1]:
+        enemies.append(i)
     currentMoney = 0
     richCatLevel = 0
     currentOpponentBaseHp = stages[currentStage][0]
@@ -330,17 +303,30 @@ def initStage(currentStage):
     boss = False
     enterBattleSound.play()
 
-    listOfBasehps = list(filter(basehpcheck, stages[currentStage][1]))[3][1] # gets 0-100 values
-=======
-
-#     while inStage:
-#         for i in range(currentEnemies):
-#             if int(time.time() - stageStartTime) in currentEnemies:
-#                 print()
->>>>>>> origin/unitClassmaking
-
+    listOfBasehps = list(filter(basehpcheck, stages[currentStage][1])) # gets 0-100 values
+    print(listOfBasehps)
+    lastHpTime = time.time()
     return enemies
-
+def enemyDeployCheck(enemy):
+    match enemy[0]:
+        case "start":
+            if enemy[2] - stageStartTime == enemy[3]:
+                enemies[1] = time.time() #updates last time
+                return True
+            else:
+                return False
+        case "hp":
+            if enemy[2] - lastHpTime == enemy[3]:
+                enemies[1] = time.time() #updates last time
+                return True
+            else:
+                return False
+        case "boss":
+            if enemy[2] - lastBossTime == enemy[3]:
+                enemies[1] = time.time() #updates last time
+                return True
+            else:
+                return False
 
 # =================================
 #            MAIN LOOP
@@ -488,11 +474,10 @@ while True:
                         upgradeWorkerCat()
                     case _:
                         blockSound.play()
-<<<<<<< HEAD
             if inStage:
                 if STAGESTAGE == 0: #done
-                    enemies = initStage()
-                if listOfBasehps: #done
+                    enemies = initStage("Korea")
+                if len(listOfBasehps) > 0: #done
                     if listOfBasehps[0] > currentBaseHp/stages[currentStage][0]*100 > listOfBasehps[1]:
                         currentHpEnemies = list(filter(hpTriggerCheck, enemies))
                         for i in currentHpEnemies:
@@ -501,14 +486,14 @@ while True:
                 if "boss" in STAGESTATES: #done
                     STAGESTATES = "boss"
                     lastBossTime = time.time()
-                currentEnemies = list(filter(lambda enemy: enemy[2] == "start" and enemy[]-enemy[2] == time.time(), enemies))
-                match STAGESTATES:
-                    case "start":
-                        currentEnemies = list(filter(lambda enemy: enemy[2] == "start" and enemy[]-enemy[2] == time.time(), enemies))
-                    case "hp":
-                        currentEnemies = list(filter(lambda enemy: enemy[2] == "hp" and enemy[]-enemy[2] == time.time(), enemies))
-                    case "boss":
-                        currentEnemies = list(filter(lambda enemy: enemy[2] == "boss" and enemy[]-enemy[2] == time.time(), enemies))
+                currentEnemies = list(filter(enemyDeployCheck, enemies))
+                # match STAGESTATES:
+                #     case "start":
+                #         currentEnemies = list(filter(lambda enemy: enemy[2] == "start" and enemy[]-enemy[2] == time.time(), enemies))
+                #     case "hp":
+                #         currentEnemies = list(filter(lambda enemy: enemy[2] == "hp" and enemy[]-enemy[2] == time.time(), enemies))
+                #     case "boss":
+                #         currentEnemies = list(filter(lambda enemy: enemy[2] == "boss" and enemy[]-enemy[2] == time.time(), enemies))
                 if currentEnemies and numOfEnemies<=stages[2]: # checks if list is empty and is under enemy unit cap
                     for i in range(currentEnemies):
                         deploy("enemy", currentEnemies[0], currentEnemies[1])
@@ -519,11 +504,6 @@ while True:
                 match every[0]:
                     case "":
                         print()
-=======
-            if not inStage:
-                print()
-                
->>>>>>> origin/unitClassmaking
         
     # start screen -> go directly to cat base screen
         # only have START, UPGRADE, xp bar (top right)
