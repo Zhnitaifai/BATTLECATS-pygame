@@ -11,6 +11,8 @@ fpsClock = pygame.time.Clock()
 screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption('BATTLE CATS')
 
+pygame.font.init()
+
 GAMESTATE = "STAGE"
 '''
     GAME STATES:
@@ -220,7 +222,7 @@ keyPressedBoolean = [
 
 # list of cats on hotbar going into battle
 # name, cooldown timer
-hotbar = [["Cat", 60], ["Tank", 60], ["Axe", 60], ["Gross", 66], ["Cow", 60], ["Bird", 60], ["Fish", 126], ["Lizard", 306], ["Titan", 546], ["Baha", 3000]]
+hotbar = [["Cat", 60, 75], ["Tank", 60, 150], ["Axe", 60, 300], ["Gross", 66, 400], ["Cow", 60, 750], ["Bird", 60, 975], ["Fish", 126, 1200], ["Lizard", 306, 1500], ["Titan", 546, 1950], ["Baha", 3000, 4500]]
 catCooldowns = {
     "Cat": 0, 
     "Tank": 0, 
@@ -234,18 +236,21 @@ catCooldowns = {
     "Baha": 0
 }
 # side = "cat" or "enemy", name = unit's name, level
-def deploy(side, name, level):
+def deploy(side, name, level, ballet):
     # hotbar slot time is current time - cooldown = => then can depoly
     new_unit = Unit.Unit(side, name, level)
+    for i in hotbar:
+        if i[0] == name:
+            cooldown = i[1]
+            cost = i[2]
+            break
     if side == 'cat' and len(catDict) < 50:
-        if catCooldowns[name] == 0:
+        if catCooldowns[name] == 0 and ballet > cost:
             catDict.update({f'{name}{catAmt+1}': new_unit})
-            for i in hotbar:
-                if i[0] == name:
-                    catCooldowns[name] = i[1]
-                    break
+            catCooldowns[name] = cooldown
             deploySound.play()
-            return True
+            ballet -= cost
+            return wallet
         else:
             blockSound.play()
     else: 
@@ -257,10 +262,17 @@ def menuNav(direction):
     # for arrows
     print(f"menuNav: {direction}")
 
-workerCatLevel = 0
-def upgradeWorkerCat():
-    print("upgrade worker cat")
-    
+workerCatLevel = 1
+wallet = 0
+walletSizes = [0, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500]
+def upgradeWorkerCat(wallet, workerCatLevel):
+    if wallet > 180*workerCatLevel and workerCatLevel < 8:
+        wallet -= 180*workerCatLevel
+        workerCatLevel += 1
+        deploySound.play()
+    else:
+        blockSound.play()
+    return wallet, workerCatLevel
 def isPressed(key):
     if key[1]:
         return True
@@ -416,29 +428,71 @@ while True:
             for every in currentKeyPresses:
                 match every[0]:
                     case "q":
-                        catAmt += (1 if deploy("cat", hotbar[0][0], catLevel) else 0)
+                        thingie = deploy("cat", hotbar[0][0], catLevel, wallet)
+                        if thingie != False:
+                            catAmt += 1
+                            wallet = thingie
                     case "w":
-                        catAmt += (1 if deploy("cat", hotbar[1][0], catLevel) else 0)
+                        thingie = deploy("cat", hotbar[1][0], catLevel, wallet)
+                        if thingie != False:
+                            catAmt += 1
+                            wallet = thingie
                     case "e":
-                        catAmt += (1 if deploy("cat", hotbar[2][0], catLevel) else 0)
+                        thingie = deploy("cat", hotbar[2][0], catLevel, wallet)
+                        if thingie != False:
+                            catAmt += 1
+                            wallet = thingie
                     case "r":
-                        catAmt += (1 if deploy("cat", hotbar[3][0], catLevel) else 0)
+                        thingie = deploy("cat", hotbar[3][0], catLevel, wallet)
+                        if thingie != False:
+                            catAmt += 1
+                            wallet = thingie
                     case "t":
-                        catAmt += (1 if deploy("cat", hotbar[4][0], catLevel) else 0)
+                        thingie = deploy("cat", hotbar[4][0], catLevel, wallet)
+                        if thingie != False:
+                            catAmt += 1
+                            wallet = thingie
                     case "a":
-                        catAmt += (1 if deploy("cat", hotbar[5][0], catLevel) else 0)
+                        thingie = deploy("cat", hotbar[5][0], catLevel, wallet)
+                        if thingie != False:
+                            catAmt += 1
+                            wallet = thingie
                     case "s":
-                        catAmt += (1 if deploy("cat", hotbar[6][0], catLevel) else 0)
+                        thingie = deploy("cat", hotbar[6][0], catLevel, wallet)
+                        if thingie != False:
+                            catAmt += 1
+                            wallet = thingie
                     case "d":
-                        catAmt += (1 if deploy("cat", hotbar[7][0], catLevel) else 0)
+                        thingie = deploy("cat", hotbar[7][0], catLevel, wallet)
+                        if thingie != False:
+                            catAmt += 1
+                            wallet = thingie
                     case "f":
-                        catAmt += (1 if deploy("cat", hotbar[8][0], catLevel) else 0)
+                        thingie = deploy("cat", hotbar[8][0], catLevel, wallet)
+                        if thingie != False:
+                            catAmt += 1
+                            wallet = thingie
                     case "g":
-                        catAmt += (1 if deploy("cat", hotbar[9][0], catLevel) else 0)
+                        thingie = deploy("cat", hotbar[9][0], catLevel, wallet)
+                        if thingie != False:
+                            catAmt += 1
+                            wallet = thingie
                     case "tab":
-                        upgradeWorkerCat()
+                        wallet, workerCatLevel = upgradeWorkerCat(wallet, workerCatLevel)
                     case _:
                         blockSound.play()
+            maxWallet = walletSizes[workerCatLevel]
+            wallet += 1 + workerCatLevel*.5
+            if wallet > maxWallet:
+                wallet = maxWallet
+            print(wallet)
+            font = pygame.font.Font(None, 32)
+            money = font.render(f"${round(wallet)}/{maxWallet}", True, (0, 0, 0), None)
+            screen.blit(money, (1700, 100))
+            workerLevel = font.render(f"Worker Level {workerCatLevel}", True, (0, 0, 0), None)
+            screen.blit(workerLevel, (1700, 132))
+            upgradeCost = font.render(f"To Upgrade: ${180*workerCatLevel}", True, (0, 0, 0), None)
+            screen.blit(upgradeCost, (1700, 164))
             if not inStage:
                 print()
                 
