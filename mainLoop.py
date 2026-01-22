@@ -223,7 +223,7 @@ keyPressedBoolean = [
 # list of cats on hotbar going into battle
 # name, cooldown timer
 hotbar = [["Cat", 60, 75], ["Tank", 60, 150], ["Axe", 60, 300], ["Gross", 66, 400], ["Cow", 60, 750], 
-            ["Bird", 60, 975], ["Fish", 126, 1200], ["Lizard", 306, 1500], ["Titan", 546, 1950], ["Baha", 3000, 4500], ["CatBase", 0, 0]]
+            ["Bird", 60, 975], ["Fish", 126, 1200], ["Lizard", 306, 1500], ["Titan", 546, 1950], ["Baha", 3000, 00], ["CatBase", 0, 0]]
 catCooldowns = {
     "Cat": 0, 
     "Tank": 0, 
