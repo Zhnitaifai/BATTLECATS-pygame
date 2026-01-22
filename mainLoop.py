@@ -250,7 +250,7 @@ def deploy(side, name, level, ballet):
             catCooldowns[name] = cooldown
             deploySound.play()
             ballet -= cost
-            return wallet
+            return ballet
         else:
             blockSound.play()
     else: 
@@ -485,14 +485,15 @@ while True:
             wallet += 1 + workerCatLevel*.5
             if wallet > maxWallet:
                 wallet = maxWallet
-            print(wallet)
+            
+            # x for money = 1700
             font = pygame.font.Font(None, 32)
             money = font.render(f"${round(wallet)}/{maxWallet}", True, (0, 0, 0), None)
-            screen.blit(money, (1700, 100))
+            screen.blit(money, (0, 100))
             workerLevel = font.render(f"Worker Level {workerCatLevel}", True, (0, 0, 0), None)
-            screen.blit(workerLevel, (1700, 132))
+            screen.blit(workerLevel, (0, 132))
             upgradeCost = font.render(f"To Upgrade: ${180*workerCatLevel}", True, (0, 0, 0), None)
-            screen.blit(upgradeCost, (1700, 164))
+            screen.blit(upgradeCost, (0, 164))
             if not inStage:
                 print()
                 
