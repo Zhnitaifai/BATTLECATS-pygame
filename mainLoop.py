@@ -286,6 +286,10 @@ listOfBasehps = []
 
 catDict = {}
 enemyDict = {}
+catAmt = 0
+enemyAmt = 0
+catPos = {}
+enemyPos = {}
 
 def basehpcheck(value):
     if value[3][0] == "hp":
@@ -318,7 +322,7 @@ def enemyDeployCheck(enemy):
         case "hp":
             if enemy[2] - lastHpTime == enemy[3]:
                 enemies[1] = time.time() #updates last time
-                return True
+                return True 
             else:
                 return False
         case "boss":
@@ -502,8 +506,11 @@ while True:
         case _:
             for every in currentKeyPresses:
                 match every[0]:
-                    case "":
-                        print()
+                    case "enter":
+                        # temp to test 1 level only
+                        currentStage = "Korea"
+                        inStage = True
+                        GAMESTATE = "STAGE"
         
     # start screen -> go directly to cat base screen
         # only have START, UPGRADE, xp bar (top right)
