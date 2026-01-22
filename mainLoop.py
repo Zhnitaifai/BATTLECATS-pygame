@@ -394,6 +394,8 @@ while True:
             if not baseSpawned:
                 deploy("cat", "CatBase", 1, wallet)
                 catAmt += 1
+                deploy("enemy", currentStage, 1, wallet)
+                enemyAmt += 1
                 baseSpawned = True
             catPos = {}
             if len(catDict) > 0:
