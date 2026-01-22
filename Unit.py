@@ -40,7 +40,7 @@ class Unit:
             self.x = 1300
             self.y = random.randint(*((400, 450) if self.name != "Baha" else (200, 250)))
             self.xHitbox = self.x+200
-        elif type == 'notCat':
+        elif type == 'enemy':
             self.stats = open(f'Enemies/{name}/stats.csv')
             self.stats = self.stats.readline().split(",")
             for i in range(len(self.stats)):

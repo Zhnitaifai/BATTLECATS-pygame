@@ -222,7 +222,8 @@ keyPressedBoolean = [
 
 # list of cats on hotbar going into battle
 # name, cooldown timer
-hotbar = [["Cat", 60, 75], ["Tank", 60, 150], ["Axe", 60, 300], ["Gross", 66, 400], ["Cow", 60, 750], ["Bird", 60, 975], ["Fish", 126, 1200], ["Lizard", 306, 1500], ["Titan", 546, 1950], ["Baha", 3000, 4500]]
+hotbar = [["Cat", 60, 75], ["Tank", 60, 150], ["Axe", 60, 300], ["Gross", 66, 400], ["Cow", 60, 750], 
+            ["Bird", 60, 975], ["Fish", 126, 1200], ["Lizard", 306, 1500], ["Titan", 546, 1950], ["Baha", 3000, 4500], ["CatBase", 0, 0]]
 catCooldowns = {
     "Cat": 0, 
     "Tank": 0, 
@@ -233,7 +234,8 @@ catCooldowns = {
     "Fish": 0, 
     "Lizard": 0, 
     "Titan": 0, 
-    "Baha": 0
+    "Baha": 0,
+    "CatBase": 0
 }
 # side = "cat" or "enemy", name = unit's name, level
 def deploy(side, name, level, ballet):
@@ -244,7 +246,7 @@ def deploy(side, name, level, ballet):
             cooldown = i[1]
             cost = i[2]
             break
-    if side == 'cat' and len(catDict) < 50:
+    if side == 'cat' and len(catDict) < 51:
         if catCooldowns[name] == 0 and ballet > cost:
             catDict.update({f'{name}{catAmt+1}': new_unit})
             catCooldowns[name] = cooldown
@@ -263,7 +265,7 @@ def menuNav(direction):
     print(f"menuNav: {direction}")
 
 workerCatLevel = 1
-wallet = 0
+wallet = 1
 walletSizes = [0, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500]
 def upgradeWorkerCat(wallet, workerCatLevel):
     if wallet > 180*workerCatLevel and workerCatLevel < 8:
@@ -283,6 +285,7 @@ currentMoney = 0
 currentEnemies = [] # times for finding intervals
 currentOpponentBaseHp= 0
 currentBaseHp = 0
+baseSpawned = False
 catDict = {}
 enemyDict = {}
 catAmt = 0
@@ -310,46 +313,6 @@ enemyPos = {}
 # =================================
 enterBattleSound.play()
 while True:
-    if not backgroundMusicPlaying:
-        normalBattleMusic.play(-1)
-        backgroundMusicPlaying = True
-    screen.fill("red")
-    catPos = {}
-    if len(catDict) > 0:
-        print(len(catDict))
-    if len(catDict) > 0:
-        for i in (catDict):
-            display = catDict[i].unitUpdate(enemyPos)
-            catPos.update({i: display["hitbox"]})
-            screen.blit(display["animation"], display["displayPos"])
-            catDict[i].unitDetectionUpdate(enemyPos)
-            if display["attack?"]:
-                for i in display["targets"]:
-                    if enemyDict[i].takeDamage(display["damage"]):
-                        del enemyDict[i]
-                        del enemyPos[i]
-    enemyPos = {}
-    if len(enemyDict) > 0:
-        for i in (enemyDict):
-            display = enemyDict[i].unitUpdate(catPos)
-            enemyPos.update({i: display["hitbox"]})
-            screen.blit(display["animation"], display["displayPos"])
-            enemyDict[i].unitDetectionUpdate(catPos)
-            if display["attack?"]:
-                for i in display["targets"]:
-                    if catDict[i].takeDamage(display["damage"]):
-                        del catDict[i]
-                        del catPos[i]
-    if len(catDict) > 0:
-        for i in (catDict):
-            catDict[i].unitDetectionUpdate(enemyPos)
-    if len(enemyDict) > 0:
-        for i in (enemyDict):
-            enemyDict[i].unitDetectionUpdate(catPos)
-
-    for i in catCooldowns:
-        if catCooldowns[i] > 0:
-            catCooldowns[i] -= 1
     # key press detection
     keyPressedBoolean = [
         ["q", False],
@@ -424,6 +387,48 @@ while True:
     currentKeyPresses = list(filter(isPressed, keyPressedBoolean))
     match GAMESTATE:
         case "STAGE":
+            if not backgroundMusicPlaying:
+                normalBattleMusic.play(-1)
+                backgroundMusicPlaying = True
+            screen.fill("red")
+            if not baseSpawned:
+                deploy("cat", "CatBase", 1, wallet)
+                catAmt += 1
+                baseSpawned = True
+            catPos = {}
+            if len(catDict) > 0:
+                for i in (catDict):
+                    display = catDict[i].unitUpdate(enemyPos)
+                    catPos.update({i: display["hitbox"]})
+                    screen.blit(display["animation"], display["displayPos"])
+                    catDict[i].unitDetectionUpdate(enemyPos)
+                    if display["attack?"]:
+                        for i in display["targets"]:
+                            if enemyDict[i].takeDamage(display["damage"]):
+                                del enemyDict[i]
+                                del enemyPos[i]
+            enemyPos = {}
+            if len(enemyDict) > 0:
+                for i in (enemyDict):
+                    display = enemyDict[i].unitUpdate(catPos)
+                    enemyPos.update({i: display["hitbox"]})
+                    screen.blit(display["animation"], display["displayPos"])
+                    enemyDict[i].unitDetectionUpdate(catPos)
+                    if display["attack?"]:
+                        for i in display["targets"]:
+                            if catDict[i].takeDamage(display["damage"]):
+                                del catDict[i]
+                                del catPos[i]
+            if len(catDict) > 0:
+                for i in (catDict):
+                    catDict[i].unitDetectionUpdate(enemyPos)
+            if len(enemyDict) > 0:
+                for i in (enemyDict):
+                    enemyDict[i].unitDetectionUpdate(catPos)
+
+            for i in catCooldowns:
+                if catCooldowns[i] > 0:
+                    catCooldowns[i] -= 1
             catLevel = stages[currentStage][4]
             for every in currentKeyPresses:
                 match every[0]:
