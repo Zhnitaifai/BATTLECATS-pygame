@@ -77,8 +77,6 @@ class Unit:
             else:
                 self.x += int(self.stats[3]/2)
         elif self.state == 'attack':
-            print(self.currentFrame)
-            print(len(self.attackAnimations))
             match self.attackState:
                 case "foreswing":
                     self.currentFrame += 1

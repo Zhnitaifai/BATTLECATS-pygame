@@ -1,7 +1,7 @@
 import pygame, sys, time
 from pygame.locals import *
 import Unit
-import time
+import random
 
 pygame.init()
 
@@ -292,6 +292,7 @@ catAmt = 0
 enemyAmt = 0
 catPos = {}
 enemyPos = {}
+win = False
 # def playStage(currentStage):
 #     for i in range(stages[currentStage][1].length):
 #         currentEnemies.append([])
@@ -397,6 +398,13 @@ while True:
                 deploy("enemy", currentStage, 1, wallet)
                 enemyAmt += 1
                 baseSpawned = True
+            catList = catDict.keys()
+            if "CatBase1" not in catList:
+                GAMESTATE = "END"
+            enemyList = enemyDict.keys()
+            if f"{currentStage}1" not in enemyList:
+                win = True
+                GAMESTATE = "END"
             catPos = {}
             if len(catDict) > 0:
                 for i in (catDict):
@@ -503,7 +511,19 @@ while True:
             screen.blit(upgradeCost, (0, 164))
             if not inStage:
                 print()
-                
+        case "END":
+            font = pygame.font.Font(None, 32)
+            if win:
+                message = font.render(f"VICTORY", True, (0, 0, 0), None)
+            else:
+                message = font.render(f"DEFEAT", True, (0, 0, 0), None)
+            endscreen = pygame.image.load("rickrool.png")
+            endscreen = pygame.transform.scale(endscreen, (2000, 1000))
+            if random.randint(0, 50) == 50:
+                screen.blit(endscreen, (0, 0))
+            else: 
+                screen.fill("white")
+            screen.blit(message, (1000, 500))
         
     # start screen -> go directly to cat base screen
         # only have START, UPGRADE, xp bar (top right)
