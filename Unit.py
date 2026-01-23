@@ -52,15 +52,15 @@ class Unit:
             self.walkAnimations = []
             for i in range(self.stats[7]):    
                 animation = pygame.image.load(f'Enemies/{name}/Walk/frame_{i}.png')
-                self.walkAnimations.append(pygame.transform.scale(animation, ((500, 350) if self.name != "BunBun" else (750, 500))))
+                self.walkAnimations.append(pygame.transform.scale(animation, (170, 700 if self.stats[3] == 0 else ((500, 350) if self.name != "BunBun" else (750, 500)))))
             self.attackAnimations = []
             for i in range(self.stats[8]):    
                 animation = pygame.image.load(f'Enemies/{name}/Attack/frame_{i}.png')
                 self.attackAnimations.append(pygame.transform.scale(animation, ((500, 350) if self.name != "BunBun" else (750, 500))))
             self.currentFrame = 0
             self.currentAnimation = 0
-            self.x = 200
-            self.y = random.randint(*((400, 450) if self.name != "BunBun" else (200, 250)))
+            self.x = 200 if self.stats[3] != 0 else 0
+            self.y = 0 if self.stats[3] == 0 else random.randint(*((400, 450) if self.name != "BunBun" else (200, 250)))
             self.xHitbox = self.x+200
             
     def unitUpdate(self, positions):
