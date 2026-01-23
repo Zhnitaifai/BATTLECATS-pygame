@@ -1,4 +1,4 @@
-import pygame, sys, time
+import pygame, sys, time, random
 from pygame.locals import *
 import Unit
 import time
@@ -11,7 +11,7 @@ fpsClock = pygame.time.Clock()
 screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption('BATTLE CATS')
 
-GAMESTATE = "STAGE"
+GAMESTATE = "MENU"
 '''
     GAME STATES:
     - MENU
@@ -296,7 +296,8 @@ def basehpcheck(value):
         return True
 def initStage(currentStage):
     for i in stages[currentStage][1]:
-        enemies.append(i)
+        enemies.append([i[3][0], random.randint(i[4][0], i[4][0]), i[3][1]])
+        # enemies[startTrigger, last time, ]
     currentMoney = 0
     richCatLevel = 0
     currentOpponentBaseHp = stages[currentStage][0]
@@ -310,24 +311,30 @@ def initStage(currentStage):
     listOfBasehps = list(filter(basehpcheck, stages[currentStage][1])) # gets 0-100 values
     print(listOfBasehps)
     lastHpTime = time.time()
+
     return enemies
 def enemyDeployCheck(enemy):
+    # print("check")
     match enemy[0]:
         case "start":
-            if enemy[2] - stageStartTime == enemy[3]:
+            print("start")
+            if enemy[1] - stageStartTime == enemy[2]:
                 enemies[1] = time.time() #updates last time
+                print("TRUE")
                 return True
             else:
                 return False
         case "hp":
-            if enemy[2] - lastHpTime == enemy[3]:
+            if enemy[1] - lastHpTime == enemy[2]:
                 enemies[1] = time.time() #updates last time
-                return True 
+                print("TRUE")
+                return True
             else:
                 return False
         case "boss":
-            if enemy[2] - lastBossTime == enemy[3]:
+            if enemy[1] - lastBossTime == enemy[2]:
                 enemies[1] = time.time() #updates last time
+                print("TRUE")
                 return True
             else:
                 return False
@@ -449,6 +456,7 @@ while True:
                 sys.exit()
 
     currentKeyPresses = list(filter(isPressed, keyPressedBoolean))
+    # print(GAMESTATE)
     match GAMESTATE:
         case "STAGE":
             catLevel = stages[currentStage][4]
@@ -481,6 +489,7 @@ while True:
             if inStage:
                 if STAGESTAGE == 0: #done
                     enemies = initStage("Korea")
+                    print(f"enemies:{enemies}")
                 if len(listOfBasehps) > 0: #done
                     if listOfBasehps[0] > currentBaseHp/stages[currentStage][0]*100 > listOfBasehps[1]:
                         currentHpEnemies = list(filter(hpTriggerCheck, enemies))
@@ -490,15 +499,11 @@ while True:
                 if "boss" in STAGESTATES: #done
                     STAGESTATES = "boss"
                     lastBossTime = time.time()
+
                 currentEnemies = list(filter(enemyDeployCheck, enemies))
-                # match STAGESTATES:
-                #     case "start":
-                #         currentEnemies = list(filter(lambda enemy: enemy[2] == "start" and enemy[]-enemy[2] == time.time(), enemies))
-                #     case "hp":
-                #         currentEnemies = list(filter(lambda enemy: enemy[2] == "hp" and enemy[]-enemy[2] == time.time(), enemies))
-                #     case "boss":
-                #         currentEnemies = list(filter(lambda enemy: enemy[2] == "boss" and enemy[]-enemy[2] == time.time(), enemies))
+
                 if currentEnemies and numOfEnemies<=stages[2]: # checks if list is empty and is under enemy unit cap
+                    print(currentEnemies)
                     for i in range(currentEnemies):
                         deploy("enemy", currentEnemies[0], currentEnemies[1])
                 STAGESTAGE += 1
