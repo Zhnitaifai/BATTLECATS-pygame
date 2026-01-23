@@ -293,6 +293,7 @@ enemyAmt = 0
 catPos = {}
 enemyPos = {}
 win = False
+load = False
 # def playStage(currentStage):
 #     for i in range(stages[currentStage][1].length):
 #         currentEnemies.append([])
@@ -512,18 +513,20 @@ while True:
             if not inStage:
                 print()
         case "END":
-            font = pygame.font.Font(None, 32)
-            if win:
-                message = font.render(f"VICTORY", True, (0, 0, 0), None)
-            else:
-                message = font.render(f"DEFEAT", True, (0, 0, 0), None)
-            endscreen = pygame.image.load("rickrool.png")
-            endscreen = pygame.transform.scale(endscreen, (2000, 1000))
-            if random.randint(0, 50) == 50:
-                screen.blit(endscreen, (0, 0))
-            else: 
-                screen.fill("white")
-            screen.blit(message, (1000, 500))
+            font = pygame.font.Font(None, 32) 
+            if not load:
+                if win:
+                    message = font.render(f"VICTORY", True, (0, 0, 0), None)
+                else:
+                    message = font.render(f"DEFEAT", True, (0, 0, 0), None)
+                endscreen = pygame.image.load("backgrounds/rick-astley.jpg")
+                endscreen = pygame.transform.scale(endscreen, (2000, 1000))
+                if random.randint(0, 50) == 50:
+                    screen.blit(endscreen, (0, 0))
+                else: 
+                    screen.fill("white")
+                screen.blit(message, (1000, 500))
+                load = True
         
     # start screen -> go directly to cat base screen
         # only have START, UPGRADE, xp bar (top right)
