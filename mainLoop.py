@@ -195,6 +195,7 @@ unitRecharged = pygame.mixer.Sound('Sounds/bcUnitRecharge.ogg')
 victory = pygame.mixer.Sound('Sounds/bcVictory.ogg')
 
 normalBattleMusic = pygame.mixer.Sound('Music/bcBattle1.ogg')
+menuMusic = pygame.mixer.Sound('Music/bcMenu1.ogg')
 
 # pygame.mixer.music.play(-1, 0.0) #-1: play forever, 0.0 = starting point
 backgroundMusicPlaying = False
@@ -374,13 +375,14 @@ while True:
                 keyPressedBoolean[14][1] = True
             if event.key == K_TAB:
                 keyPressedBoolean[15][1] = True
-                
+    
             # for exitting program /w keyboard shortcut
             if event.key == K_ESCAPE:
-                if GAMESTATE == "PAUSE":
-                    GAMESTATE = "STAGE"
-                else:
+                if GAMESTATE != "PAUSE":
+                    previousState = GAMESTATE
                     GAMESTATE = "PAUSE"
+                else:
+                    GAMESTATE = previousState
                 print(GAMESTATE)
             if event.key == K_F4:
                 pygame.quit()   
@@ -388,24 +390,43 @@ while True:
 
     currentKeyPresses = list(filter(isPressed, keyPressedBoolean))
     match GAMESTATE:
+        case "MENU":
+            if not load:
+                screen.fill("white")
+                message = message = font.render(f"Select Stage", True, (0, 0, 0), None)
+                screen.blit(message, (1000, 500))
+                menuMusic.play(-1)
+                currentStage = "Korea"
+            message = message = font.render(f"{currentStage}", True, (0, 0, 0), None)
+            screen.blit(message, (1000, 700))
+            for every in currentKeyPresses:
+                match every[0]:
+                    case "enter":
+                        GAMESTATE = "STAGE"
+                        load = False
+                        menuMusic.stop()
+                        print(GAMESTATE)
+                    # case "rarrow":
+                    case _:
+                        blockSound.play()
         case "STAGE":
-            if not backgroundMusicPlaying:
+            if not load:
                 normalBattleMusic.play(-1)
-                backgroundMusicPlaying = True
-            screen.fill("red")
-            if not baseSpawned:
                 deploy("cat", "CatBase", 1, wallet)
                 catAmt += 1
                 deploy("enemy", currentStage, 1, wallet)
                 enemyAmt += 1
-                baseSpawned = True
+                load = True
+            screen.fill("red")
             catList = catDict.keys()
             if "CatBase1" not in catList:
                 GAMESTATE = "END"
+                normalBattleMusic.stop()
             enemyList = enemyDict.keys()
             if f"{currentStage}1" not in enemyList:
                 win = True
                 GAMESTATE = "END"
+                normalBattleMusic.stop()
             catPos = {}
             if len(catDict) > 0:
                 for i in (catDict):
@@ -510,8 +531,7 @@ while True:
             screen.blit(workerLevel, (0, 132))
             upgradeCost = font.render(f"To Upgrade: ${180*workerCatLevel}", True, (0, 0, 0), None)
             screen.blit(upgradeCost, (0, 164))
-            if not inStage:
-                print()
+                
         case "END":
             font = pygame.font.Font(None, 32) 
             if not load:
@@ -526,7 +546,17 @@ while True:
                 else: 
                     screen.fill("white")
                 screen.blit(message, (1000, 500))
+                message = message = font.render(f"Press ENTER to Continue", True, (0, 0, 0), None)
+                screen.blit(message, (1000, 532))
                 load = True
+            for every in currentKeyPresses:
+                match every[0]:
+                    case "enter":
+                        GAMESTATE = "MENU"
+                        load = False
+                        print(GAMESTATE)
+                    case _:
+                        blockSound.play()
         
     # start screen -> go directly to cat base screen
         # only have START, UPGRADE, xp bar (top right)

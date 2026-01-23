@@ -59,7 +59,7 @@ class Unit:
                 self.attackAnimations.append(pygame.transform.scale(animation, ((500, 350) if self.name != "BunBun" else (750, 500))))
             self.currentFrame = 0
             self.currentAnimation = 0
-            self.x = 200 if self.stats[3] != 0 else 0
+            self.x = 200 if self.stats[3] != 0 else 100
             self.y = 0 if self.stats[3] == 0 else random.randint(*((400, 450) if self.name != "BunBun" else (200, 250)))
             self.xHitbox = self.x+200
             
