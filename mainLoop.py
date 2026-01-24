@@ -13,7 +13,7 @@ pygame.display.set_caption('BATTLE CATS')
 
 pygame.font.init()
 
-GAMESTATE = "STAGE"
+GAMESTATE = "MENU"
 '''
     GAME STATES:
     - MENU
@@ -179,6 +179,8 @@ stages = {
                       10)
 }
 
+stageList = ["Korea", "Cambodia", "Singapore", "Dubai", "South Africa", "Turkey", "Monaco", "Denmark", "Canada", "Colombia", "Easter Island", "Hollywood", "Moon"]
+
 # def playAudio(name):
 attackSound = pygame.mixer.Sound('Sounds/bcAttack.ogg')
 attackBaseSound = pygame.mixer.Sound('Sounds/bcAttackBase.ogg')
@@ -195,6 +197,7 @@ unitRecharged = pygame.mixer.Sound('Sounds/bcUnitRecharge.ogg')
 victory = pygame.mixer.Sound('Sounds/bcVictory.ogg')
 
 normalBattleMusic = pygame.mixer.Sound('Music/bcBattle1.ogg')
+menuMusic = pygame.mixer.Sound('Music/bcMenu1.ogg')
 
 # pygame.mixer.music.play(-1, 0.0) #-1: play forever, 0.0 = starting point
 backgroundMusicPlaying = False
@@ -237,6 +240,8 @@ catCooldowns = {
     "Baha": 0,
     "CatBase": 0
 }
+
+
 # side = "cat" or "enemy", name = unit's name, level
 def deploy(side, name, level, ballet):
     # hotbar slot time is current time - cooldown = => then can depoly
@@ -279,7 +284,7 @@ def isPressed(key):
     if key[1]:
         return True
 
-currentStage = "Korea"
+currentStage = 0
 inStage = True
 currentMoney = 0
 currentEnemies = [] # times for finding intervals
@@ -313,7 +318,6 @@ load = False
 # =================================
 # MAIN LOOP
 # =================================
-enterBattleSound.play()
 while True:
     # key press detection
     keyPressedBoolean = [
@@ -374,13 +378,14 @@ while True:
                 keyPressedBoolean[14][1] = True
             if event.key == K_TAB:
                 keyPressedBoolean[15][1] = True
-                
+    
             # for exitting program /w keyboard shortcut
             if event.key == K_ESCAPE:
-                if GAMESTATE == "PAUSE":
-                    GAMESTATE = "STAGE"
-                else:
+                if GAMESTATE != "PAUSE":
+                    previousState = GAMESTATE
                     GAMESTATE = "PAUSE"
+                else:
+                    GAMESTATE = previousState
                 print(GAMESTATE)
             if event.key == K_F4:
                 pygame.quit()   
@@ -388,24 +393,60 @@ while True:
 
     currentKeyPresses = list(filter(isPressed, keyPressedBoolean))
     match GAMESTATE:
+        case "MENU":
+            font = pygame.font.Font(None, 90)
+            if not load:
+                menuMusic.play(-1)
+                currentStage = 0
+                load = True
+            bg = pygame.transform.scale(pygame.image.load(f'backgrounds/{stageList[currentStage]}.png'), (1920, 1080))
+            cat = pygame.transform.scale(pygame.image.load(f'Cats/Cat/Normal/Walk/frame_0.png'), (300, 200))
+            screen.fill("white")
+            screen.blit(bg, (0, 0))
+            screen.blit(cat, (850, 400))
+            message = message = font.render(f"Select Stage", True, (255, 255, 255), None)
+            screen.blit(message, (100, 500))
+            pygame.draw.rect(screen, (0, 0, 0), Rect(50, 675, 450, 90))
+            message = message = font.render(f"{stageList[currentStage]}", True, (255, 255, 255), None)
+            screen.blit(message, (100, 700))
+            for every in currentKeyPresses:
+                match every[0]:
+                    case "enter":
+                        GAMESTATE = "STAGE"
+                        load = False
+                        menuMusic.stop()
+                        print(GAMESTATE)
+                    case "rarrow":
+                        currentStage += 1
+                        if currentStage == len(stageList):
+                            currentStage = 0
+                    case "larrow":
+                        currentStage -= 1
+                        if currentStage < -1:
+                            currentStage = len(stageList) -1
+                    case _:
+                        blockSound.play()
         case "STAGE":
-            if not backgroundMusicPlaying:
+            font = pygame.font.Font(None, 32)
+            if not load:
                 normalBattleMusic.play(-1)
-                backgroundMusicPlaying = True
-            screen.fill("red")
-            if not baseSpawned:
                 deploy("cat", "CatBase", 1, wallet)
                 catAmt += 1
-                deploy("enemy", currentStage, 1, wallet)
+                deploy("enemy", stageList[currentStage], 1, wallet)
                 enemyAmt += 1
-                baseSpawned = True
+                load = True
+            screen.fill("red")
             catList = catDict.keys()
             if "CatBase1" not in catList:
                 GAMESTATE = "END"
+                load = False
+                normalBattleMusic.stop()
             enemyList = enemyDict.keys()
-            if f"{currentStage}1" not in enemyList:
+            if f"{stageList[currentStage]}1" not in enemyList:
                 win = True
                 GAMESTATE = "END"
+                load = False
+                normalBattleMusic.stop()
             catPos = {}
             if len(catDict) > 0:
                 for i in (catDict):
@@ -440,7 +481,7 @@ while True:
             for i in catCooldowns:
                 if catCooldowns[i] > 0:
                     catCooldowns[i] -= 1
-            catLevel = stages[currentStage][4]
+            catLevel = stages[stageList[currentStage]][4]
             for every in currentKeyPresses:
                 match every[0]:
                     case "q":
@@ -503,15 +544,13 @@ while True:
                 wallet = maxWallet
             
             # x for money = 1700
-            font = pygame.font.Font(None, 32)
             money = font.render(f"${round(wallet)}/{maxWallet}", True, (0, 0, 0), None)
             screen.blit(money, (0, 100))
             workerLevel = font.render(f"Worker Level {workerCatLevel}", True, (0, 0, 0), None)
             screen.blit(workerLevel, (0, 132))
             upgradeCost = font.render(f"To Upgrade: ${180*workerCatLevel}", True, (0, 0, 0), None)
             screen.blit(upgradeCost, (0, 164))
-            if not inStage:
-                print()
+                
         case "END":
             normalBattleMusic.stop()
             font = pygame.font.Font(None, 32) 
@@ -532,6 +571,14 @@ while True:
                 message = font.render(f"Press Enter to Continue", True, (0, 0, 0), None)
                 screen.blit(message, (1000, 532))
                 load = True
+            for every in currentKeyPresses:
+                match every[0]:
+                    case "enter":
+                        GAMESTATE = "MENU"
+                        load = False
+                        print(GAMESTATE)
+                    case _:
+                        blockSound.play()
         
     # start screen -> go directly to cat base screen
         # only have START, UPGRADE, xp bar (top right)
