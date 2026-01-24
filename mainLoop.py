@@ -318,7 +318,6 @@ load = False
 # =================================
 # MAIN LOOP
 # =================================
-enterBattleSound.play()
 while True:
     # key press detection
     keyPressedBoolean = [
@@ -401,7 +400,7 @@ while True:
                 currentStage = 0
                 load = True
             bg = pygame.transform.scale(pygame.image.load(f'backgrounds/{stageList[currentStage]}.png'), (1920, 1080))
-            cat = pygame.transform.scale(pygame.image.load(f'Cats/Cat/Normal/Walk/frame_0.png'), (200, 200))
+            cat = pygame.transform.scale(pygame.image.load(f'Cats/Cat/Normal/Walk/frame_0.png'), (300, 200))
             screen.fill("white")
             screen.blit(bg, (0, 0))
             screen.blit(cat, (850, 400))
