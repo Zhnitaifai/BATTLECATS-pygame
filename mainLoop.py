@@ -250,7 +250,7 @@ def deploy(side, name, level, ballet):
         if catCooldowns[name] == 0 and ballet > cost:
             catDict.update({f'{name}{catAmt+1}': new_unit})
             catCooldowns[name] = cooldown
-            deploySound.play()
+            deploySound.play() if name != "CatBase" else print()
             ballet -= cost
             return ballet
         else:
@@ -513,12 +513,15 @@ while True:
             if not inStage:
                 print()
         case "END":
+            normalBattleMusic.stop()
             font = pygame.font.Font(None, 32) 
             if not load:
                 if win:
                     message = font.render(f"VICTORY", True, (0, 0, 0), None)
+                    victory.play()
                 else:
                     message = font.render(f"DEFEAT", True, (0, 0, 0), None)
+                    defeatSound.play()
                 endscreen = pygame.image.load("backgrounds/rick-astley.jpg")
                 endscreen = pygame.transform.scale(endscreen, (2000, 1000))
                 if random.randint(0, 50) == 50:
@@ -526,6 +529,8 @@ while True:
                 else: 
                     screen.fill("white")
                 screen.blit(message, (1000, 500))
+                message = font.render(f"Press Enter to Continue", True, (0, 0, 0), None)
+                screen.blit(message, (1000, 532))
                 load = True
         
     # start screen -> go directly to cat base screen
