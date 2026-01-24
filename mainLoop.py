@@ -13,7 +13,7 @@ pygame.display.set_caption('BATTLE CATS')
 
 pygame.font.init()
 
-GAMESTATE = "STAGE"
+GAMESTATE = "MENU"
 '''
     GAME STATES:
     - MENU
@@ -179,6 +179,8 @@ stages = {
                       10)
 }
 
+stageList = ["Korea", "Cambodia", "Singapore", "Dubai", "South Africa", "Turkey", "Monaco", "Denmark", "Canada", "Colombia", "Easter Island", "Hollywood", "Moon"]
+
 # def playAudio(name):
 attackSound = pygame.mixer.Sound('Sounds/bcAttack.ogg')
 attackBaseSound = pygame.mixer.Sound('Sounds/bcAttackBase.ogg')
@@ -238,6 +240,8 @@ catCooldowns = {
     "Baha": 0,
     "CatBase": 0
 }
+
+
 # side = "cat" or "enemy", name = unit's name, level
 def deploy(side, name, level, ballet):
     # hotbar slot time is current time - cooldown = => then can depoly
@@ -280,7 +284,7 @@ def isPressed(key):
     if key[1]:
         return True
 
-currentStage = "Korea"
+currentStage = 0
 inStage = True
 currentMoney = 0
 currentEnemies = [] # times for finding intervals
@@ -391,14 +395,21 @@ while True:
     currentKeyPresses = list(filter(isPressed, keyPressedBoolean))
     match GAMESTATE:
         case "MENU":
+            font = pygame.font.Font(None, 90)
             if not load:
-                screen.fill("white")
-                message = message = font.render(f"Select Stage", True, (0, 0, 0), None)
-                screen.blit(message, (1000, 500))
                 menuMusic.play(-1)
-                currentStage = "Korea"
-            message = message = font.render(f"{currentStage}", True, (0, 0, 0), None)
-            screen.blit(message, (1000, 700))
+                currentStage = 0
+                load = True
+            bg = pygame.transform.scale(pygame.image.load(f'backgrounds/{stageList[currentStage]}.png'), (1920, 1080))
+            cat = pygame.transform.scale(pygame.image.load(f'Cats/Cat/Normal/Walk/frame_0.png'), (200, 200))
+            screen.fill("white")
+            screen.blit(bg, (0, 0))
+            screen.blit(cat, (850, 400))
+            message = message = font.render(f"Select Stage", True, (255, 255, 255), None)
+            screen.blit(message, (100, 500))
+            pygame.draw.rect(screen, (0, 0, 0), Rect(50, 675, 450, 90))
+            message = message = font.render(f"{stageList[currentStage]}", True, (255, 255, 255), None)
+            screen.blit(message, (100, 700))
             for every in currentKeyPresses:
                 match every[0]:
                     case "enter":
@@ -406,26 +417,36 @@ while True:
                         load = False
                         menuMusic.stop()
                         print(GAMESTATE)
-                    # case "rarrow":
+                    case "rarrow":
+                        currentStage += 1
+                        if currentStage == len(stageList):
+                            currentStage = 0
+                    case "larrow":
+                        currentStage -= 1
+                        if currentStage < -1:
+                            currentStage = len(stageList) -1
                     case _:
                         blockSound.play()
         case "STAGE":
+            font = pygame.font.Font(None, 32)
             if not load:
                 normalBattleMusic.play(-1)
                 deploy("cat", "CatBase", 1, wallet)
                 catAmt += 1
-                deploy("enemy", currentStage, 1, wallet)
+                deploy("enemy", stageList[currentStage], 1, wallet)
                 enemyAmt += 1
                 load = True
             screen.fill("red")
             catList = catDict.keys()
             if "CatBase1" not in catList:
                 GAMESTATE = "END"
+                load = False
                 normalBattleMusic.stop()
             enemyList = enemyDict.keys()
-            if f"{currentStage}1" not in enemyList:
+            if f"{stageList[currentStage]}1" not in enemyList:
                 win = True
                 GAMESTATE = "END"
+                load = False
                 normalBattleMusic.stop()
             catPos = {}
             if len(catDict) > 0:
@@ -461,7 +482,7 @@ while True:
             for i in catCooldowns:
                 if catCooldowns[i] > 0:
                     catCooldowns[i] -= 1
-            catLevel = stages[currentStage][4]
+            catLevel = stages[stageList[currentStage]][4]
             for every in currentKeyPresses:
                 match every[0]:
                     case "q":
@@ -524,7 +545,6 @@ while True:
                 wallet = maxWallet
             
             # x for money = 1700
-            font = pygame.font.Font(None, 32)
             money = font.render(f"${round(wallet)}/{maxWallet}", True, (0, 0, 0), None)
             screen.blit(money, (0, 100))
             workerLevel = font.render(f"Worker Level {workerCatLevel}", True, (0, 0, 0), None)
