@@ -62,6 +62,7 @@ class Unit:
             self.x = 200 if self.stats[3] != 0 else 100
             self.y = 0 if self.stats[3] == 0 else random.randint(*((400, 450) if self.name != "BunBun" else (200, 250)))
             self.xHitbox = self.x+200
+            #(-100 if self.stats[3] == 0 else 200)
             
     def unitUpdate(self, positions):
         attack = False
@@ -103,7 +104,7 @@ class Unit:
             self.currentAnimation = self.walkAnimations[0]
             if self.attackCooldown == 0:
                 self.state = "walk"
-        self.xHitbox = self.x+(200 if self.type == 'cat' else 300)
+        self.xHitbox = self.x+(200 if self.type == 'cat' else (300 if self.stats[3] != 0 else 100))
         if self.state == 'knockback':
             if self.knockbackFrame != 0:
                 self.x -= (-15 if self.type == 'cat' else 15)
@@ -115,7 +116,7 @@ class Unit:
         return {
             "animation": self.currentAnimation, 
             "displayPos": (self.x, self.y - (150 if self.state == 'knockback' else 0)), 
-            "hitbox": (self.xHitbox, self.y), 
+            "hitbox": (self.xHitbox, self.y + (400 if self.stats[3] == 0 else 0)), 
             "attack?": attack, 
             "damage": self.attack, 
             "targets": targets

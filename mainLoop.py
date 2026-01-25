@@ -260,7 +260,7 @@ def deploy(side, name, level, ballet):
         if catCooldowns[name] == 0 and ballet >= cost:
             catDict.update({f'{name}{catAmt+1}': new_unit})
             catCooldowns[name] = cooldown
-            deploySound.play() if name != "CatBase" else print()
+            deploySound.play() if name != "CatBase" else 0
             ballet -= cost
             return ballet
         else:
@@ -272,7 +272,7 @@ def deploy(side, name, level, ballet):
 
 def menuNav(direction):
     # for arrows
-    print(f"menuNav: {direction}")
+    monkey = 0
 
 workerCatLevel = 1
 wallet = 1
@@ -316,7 +316,6 @@ load = False
 #     while inStage:
 #         for i in range(currentEnemies):
 #             if int(time.time() - stageStartTime) in currentEnemies:
-#                 print()
 
 
 
@@ -391,7 +390,6 @@ while True:
                     GAMESTATE = "PAUSE"
                 else:
                     GAMESTATE = previousState
-                print(GAMESTATE)
             if event.key == K_F4:
                 pygame.quit()   
                 sys.exit()
@@ -452,7 +450,6 @@ while True:
                 deploy("enemy", stageList[currentStage], 1, wallet)
                 enemyAmt += 1
                 load = True
-            print(enemyDict)
             bg = pygame.transform.scale(pygame.image.load(f'backgrounds/{stages[stageList[currentStage]][3]}'), (1920, 1080))
             screen.blit(bg, (0, -50))
             catList = catDict.keys()
@@ -472,7 +469,6 @@ while True:
                     display = catDict[i].unitUpdate(enemyPos)
                     catPos.update({i: display["hitbox"]})
                     screen.blit(display["animation"], display["displayPos"])
-                    catDict[i].unitDetectionUpdate(enemyPos)
                     if display["attack?"]:
                         for i in display["targets"]:
                             if enemyDict[i].takeDamage(display["damage"]):
@@ -484,7 +480,6 @@ while True:
                     display = enemyDict[i].unitUpdate(catPos)
                     enemyPos.update({i: display["hitbox"]})
                     screen.blit(display["animation"], display["displayPos"])
-                    enemyDict[i].unitDetectionUpdate(catPos)
                     if display["attack?"]:
                         for i in display["targets"]:
                             if catDict[i].takeDamage(display["damage"]):
@@ -603,7 +598,6 @@ while True:
                     case "enter":
                         GAMESTATE = "MENU"
                         load = False
-                        print(GAMESTATE)
                     case _:
                         blockSound.play()
         
