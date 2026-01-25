@@ -241,6 +241,11 @@ catCooldowns = {
     "CatBase": 0
 }
 
+def resetCooldowns(catCooldowns):
+    for i in catCooldowns:
+        catCooldowns[i] = 0
+    return catCooldowns
+
 
 # side = "cat" or "enemy", name = unit's name, level
 def deploy(side, name, level, ballet):
@@ -252,7 +257,7 @@ def deploy(side, name, level, ballet):
             cost = i[2]
             break
     if side == 'cat' and len(catDict) < 51:
-        if catCooldowns[name] == 0 and ballet > cost:
+        if catCooldowns[name] == 0 and ballet >= cost:
             catDict.update({f'{name}{catAmt+1}': new_unit})
             catCooldowns[name] = cooldown
             deploySound.play() if name != "CatBase" else print()
@@ -396,6 +401,8 @@ while True:
         case "MENU":
             font = pygame.font.Font(None, 90)
             if not load:
+                victory.stop()
+                defeatSound.stop()
                 menuMusic.play(-1)
                 currentStage = 0
                 load = True
@@ -415,27 +422,39 @@ while True:
                         GAMESTATE = "STAGE"
                         load = False
                         menuMusic.stop()
-                        print(GAMESTATE)
                     case "rarrow":
                         currentStage += 1
                         if currentStage == len(stageList):
                             currentStage = 0
+                        clickSound.play()
                     case "larrow":
                         currentStage -= 1
                         if currentStage < -1:
                             currentStage = len(stageList) -1
+                        clickSound.play()
                     case _:
                         blockSound.play()
         case "STAGE":
             font = pygame.font.Font(None, 32)
             if not load:
                 normalBattleMusic.play(-1)
+                catDict = {}
+                enemyDict = {}
+                catAmt = 0
+                enemyAmt = 0
+                catPos = {}
+                enemyPos = {}
+                win = False
+                wallet = 0
+                catCooldowns = resetCooldowns(catCooldowns)
                 deploy("cat", "CatBase", 1, wallet)
                 catAmt += 1
                 deploy("enemy", stageList[currentStage], 1, wallet)
                 enemyAmt += 1
                 load = True
-            screen.fill("red")
+            print(enemyDict)
+            bg = pygame.transform.scale(pygame.image.load(f'backgrounds/{stages[stageList[currentStage]][3]}'), (1920, 1080))
+            screen.blit(bg, (0, -50))
             catList = catDict.keys()
             if "CatBase1" not in catList:
                 GAMESTATE = "END"
@@ -570,6 +589,14 @@ while True:
                 screen.blit(message, (1000, 500))
                 message = font.render(f"Press Enter to Continue", True, (0, 0, 0), None)
                 screen.blit(message, (1000, 532))
+                for i in catDict:
+                    del i
+                for i in catPos:
+                    del i
+                for i in enemyDict:
+                    del i 
+                for i in enemyPos:
+                    del i
                 load = True
             for every in currentKeyPresses:
                 match every[0]:
