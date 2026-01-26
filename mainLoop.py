@@ -632,7 +632,6 @@ while True:
             wallet += 1 + workerCatLevel*.5
             if wallet > maxWallet:
                 wallet = maxWallet
-            print(currentStage)
             # x for money = 1700
             money = font.render(f"${round(wallet)}/{maxWallet}", True, ((0, 0, 0) if currentStage < 12 else (255, 255, 255)), None)
             screen.blit(money, (0, 100))
