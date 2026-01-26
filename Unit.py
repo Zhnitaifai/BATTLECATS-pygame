@@ -165,4 +165,5 @@ class Unit:
         return False
             
             
-            
+    def getHealth(self):
+        return self.health

@@ -518,6 +518,7 @@ while True:
                     catPos.update({i: display["hitbox"]})
                     screen.blit(display["animation"], display["displayPos"])
                     if display["attack?"]:
+                        attackSound.play()
                         for i in display["targets"][0]:
                             if enemyDict[i].takeDamage(display["damage"], display["targets"][1]):
                                 del enemyDict[i]
@@ -529,6 +530,7 @@ while True:
                     enemyPos.update({i: display["hitbox"]})
                     screen.blit(display["animation"], display["displayPos"])
                     if display["attack?"]:
+                        attackSound.play()
                         for i in display["targets"][0]:
                             if catDict[i].takeDamage(display["damage"], display["targets"][1]):
                                 del catDict[i]
@@ -639,7 +641,9 @@ while True:
             screen.blit(workerLevel, (0, 132))
             upgradeCost = font.render(f"To Upgrade: ${180*workerCatLevel}", True, ((0, 0, 0) if currentStage < 12 else (255, 255, 255)), None)
             screen.blit(upgradeCost, (0, 164))
-
+            enemyHealth = font.render(f"Enemy Base Health {enemyDict[f"{stageList[currentStage]}1"].getHealth}", True, ((0, 0, 0) if currentStage < 12 else (255, 255, 255)), None)
+            screen.blit(enemyHealth, (0, 196))
+            print(enemyDict[f"{stageList[currentStage]}1"].getHealth)
             if STAGESTAGE == 0:
                 #============
                 # STAGE INIT
