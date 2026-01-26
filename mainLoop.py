@@ -641,9 +641,9 @@ while True:
             screen.blit(workerLevel, (0, 132))
             upgradeCost = font.render(f"To Upgrade: ${180*workerCatLevel}", True, ((0, 0, 0) if currentStage < 12 else (255, 255, 255)), None)
             screen.blit(upgradeCost, (0, 164))
-            enemyHealth = font.render(f"Enemy Base Health {enemyDict[f"{stageList[currentStage]}1"].getHealth()}", True, ((0, 0, 0) if currentStage < 12 else (255, 255, 255)), None)
+            enemyHealth = font.render(f"Enemy Base Health {enemyDict[f"{stageList[currentStage]}1"].getHealth() if f"{stageList[currentStage]}1" in enemyDict else 0}", True, ((0, 0, 0) if currentStage < 12 else (255, 255, 255)), None)
             screen.blit(enemyHealth, (0, 196))
-            catHealth = font.render(f"Cat Base Health {catDict["CatBase1"].getHealth()}", True, ((0, 0, 0) if currentStage < 12 else (255, 255, 255)), None)
+            catHealth = font.render(f"Cat Base Health {catDict["CatBase1"].getHealth() if "CatBase1" in catDict else 0}", True, ((0, 0, 0) if currentStage < 12 else (255, 255, 255)), None)
             screen.blit(catHealth, (0, 228))
             if STAGESTAGE == 0:
                 #============
