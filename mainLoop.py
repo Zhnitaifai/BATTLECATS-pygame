@@ -291,7 +291,7 @@ def isPressed(key):
 
 def hpTriggerCheck(value):
     # if baseHpTriggerUnits[0][3][1] > value[3][1] > baseHpTriggerUnits[1][3][1]:
-    return value[3][1] >= currentOpponentBaseHp/stages[currentStage][0]*100
+    return value[3][1] >= currentOpponentBaseHp/stages[stageList[currentStage]][0]*100
 
 # level init variables
 currentStage = "Korea"
@@ -310,6 +310,7 @@ boss = False
 baseHpTriggerUnits = []
 currentEnemies = []
 baseHpProgression = 0 #+1 every time 
+load = False
 
 catDict = {}
 enemyDict = {}
@@ -368,47 +369,6 @@ def enemyDeployCheck(enemy):
 # =================================
 # enterBattleSound.play()
 while True:
-    if not backgroundMusicPlaying:
-        normalBattleMusic.play(-1)
-        backgroundMusicPlaying = True
-    screen.fill("red")
-    catPos = {}
-    if len(catDict) > 0:
-        print(len(catDict))
-    if len(catDict) > 0:
-        for i in (catDict):
-            display = catDict[i].unitUpdate(enemyPos)
-            catPos.update({i: display["hitbox"]})
-            screen.blit(display["animation"], display["displayPos"])
-            catDict[i].unitDetectionUpdate(enemyPos)
-            if display["attack?"]:
-                for i in display["targets"]:
-                    if enemyDict[i].takeDamage(display["damage"]):
-                        del enemyDict[i]
-                        del enemyPos[i]
-    enemyPos = {}
-    if len(enemyDict) > 0:
-        for i in (enemyDict):
-            display = enemyDict[i].unitUpdate(catPos)
-            enemyPos.update({i: display["hitbox"]})
-            screen.blit(display["animation"], display["displayPos"])
-            enemyDict[i].unitDetectionUpdate(catPos)
-            if display["attack?"]:
-                for i in display["targets"]:
-                    if catDict[i].takeDamage(display["damage"]):
-                        del catDict[i]
-                        del catPos[i]
-    if len(catDict) > 0:
-        for i in (catDict):
-            catDict[i].unitDetectionUpdate(enemyPos)
-    if len(enemyDict) > 0:
-        for i in (enemyDict):
-            enemyDict[i].unitDetectionUpdate(catPos)
-
-    for i in catCooldowns:
-        if catCooldowns[i] > 0:
-            catCooldowns[i] -= 1
-            
     # key press detection
     keyPressedBoolean = [
         ["q", False],
@@ -657,7 +617,7 @@ while True:
                     STAGESTATES.clear()
                     enemies.clear()
 
-                    for i in stages[currentStage][1]:
+                    for i in stages[stageList[currentStage]][1]:
                         enemies.append([i[3][0], i[3][1], i[4], i[2], i[2], i[0], i[1]])
                         '''
                         0. enemies[startTrigger,
@@ -670,7 +630,7 @@ while True:
                         '''
                     currentMoney = 0
                     richCatLevel = 0
-                    currentOpponentBaseHp = stages[currentStage][0]
+                    currentOpponentBaseHp = stages[stageList[currentStage]][0]
                     numOfEnemies = 0
                     stageStartTime = time.time()
                     STAGESTAGE = 1
@@ -680,20 +640,20 @@ while True:
                     enterBattleSound.play()
                     stageStartTime = int(time.time())
 
-                    baseHpTriggerUnits = [unit for unit in stages[currentStage][1] if unit[3][0] == "hp"] # gets enemy tuples that have hp triggers
+                    baseHpTriggerUnits = [unit for unit in stages[stageList[currentStage]][1] if unit[3][0] == "hp"] # gets enemy tuples that have hp triggers
                     baseHpTriggerUnits.sort(key=lambda x: x[3][1], reverse=True)
                     # need list of just base hps so that triggers can be detected
                     print(baseHpTriggerUnits)
                     lastHpTime = 0
                     lastBossTime = 0
 
-                    bossUnits = [unit for unit in stages[currentStage][1] if unit[2] == -2]
+                    bossUnits = [unit for unit in stages[stageList[currentStage]][1] if unit[2] == -2]
 
                     print(f"enemies:{enemies}")
                 # if len(baseHpTriggerUnits) > 0 and "hp" not in STAGESTATES: # if any base hp triggers in current stage
-                #     # baseHpPercentage = currentOpponentBaseHp/stages[currentStage][0]*100 # current base hp percentage
+                #     # baseHpPercentage = currentOpponentBaseHp/stages[stageList[currentStage]][0]*100 # current base hp percentage
                 #     # if baseHpTriggerUnits[0][3][1] > baseHpPercentage > baseHpTriggerUnits[1][3][1]:
-                #     if currentOpponentBaseHp/stages[currentStage][0]*100 <= baseHpTriggerUnits[0+baseHpProgression][3][1]:
+                #     if currentOpponentBaseHp/stages[stageList[currentStage]][0]*100 <= baseHpTriggerUnits[0+baseHpProgression][3][1]:
                 #         STAGESTATES.append("hp")
                 #     if "hp" in STAGESTATES:
                 #         currentHpEnemies = list(filter(hpTriggerCheck, baseHpTriggerUnits))
@@ -702,7 +662,7 @@ while True:
                 #             for i in currentHpEnemies:
                 #                 currentEnemies.append(i)
                 if len(baseHpTriggerUnits) > 0 and "hp" not in STAGESTATES:
-                    baseHpPercentage = (currentBaseHp / stages[currentStage][0]) * 100
+                    baseHpPercentage = (currentBaseHp / stages[stageList[currentStage]][0]) * 100
                     nextThreshold = baseHpTriggerUnits[0][3][1]
                 
                     if baseHpPercentage <= nextThreshold:
@@ -711,7 +671,7 @@ while True:
                         baseHpTriggerUnits.pop(0)
 
                 if len(bossUnits) > 0 and "boss" not in STAGESTATES: #checks if boss has been triggered
-                    if currentOpponentBaseHp/stages[currentStage][0]*100 <= bossUnits[0][3][1]:
+                    if currentOpponentBaseHp/stages[stageList[currentStage]][0]*100 <= bossUnits[0][3][1]:
                         STAGESTATES.append("boss")
                         lastBossTime = time.time() #used for unit deployment referencing
                         currentEnemies.append(bossUnits[0])
@@ -719,7 +679,7 @@ while True:
                 currentEnemies = list(filter(enemyDeployCheck, enemies))
                 if currentEnemies: # checks if list is empty and is under enemy unit cap
                     for i in currentEnemies:
-                        if numOfEnemies<=stages[currentStage][2]:
+                        if numOfEnemies<=stages[stageList[currentStage]][2]:
                             deploy("enemy", i[5], i[6])
                             numOfEnemies += 1
 
@@ -733,7 +693,7 @@ while True:
                 match every[0]:
                     case "enter":
                         # temp to test 1 level only
-                        currentStage = "Korea"
+                        currentStage = 0
                         inStage = True
                         GAMESTATE = "STAGE"
         
