@@ -11,6 +11,7 @@ fpsClock = pygame.time.Clock()
 DISPLAYSURF = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption('Testing, attention please')
 
+
 WHITE = (255, 255, 255)
 catImgs = []
 for i in range(17):  

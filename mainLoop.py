@@ -1,7 +1,7 @@
 import pygame, sys, time, random
 from pygame.locals import *
 import Unit
-import time
+import random
 
 pygame.init()
 
@@ -10,6 +10,8 @@ fpsClock = pygame.time.Clock()
 
 screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption('BATTLE CATS')
+
+pygame.font.init()
 
 GAMESTATE = "MENU"
 '''
@@ -177,6 +179,8 @@ stages = {
                       10)
 }
 
+stageList = ["Korea", "Cambodia", "Singapore", "Dubai", "South Africa", "Turkey", "Monaco", "Denmark", "Canada", "Colombia", "Easter Island", "Hollywood", "Moon"]
+
 # def playAudio(name):
 attackSound = pygame.mixer.Sound('Sounds/bcAttack.ogg')
 attackBaseSound = pygame.mixer.Sound('Sounds/bcAttackBase.ogg')
@@ -193,6 +197,7 @@ unitRecharged = pygame.mixer.Sound('Sounds/bcUnitRecharge.ogg')
 victory = pygame.mixer.Sound('Sounds/bcVictory.ogg')
 
 normalBattleMusic = pygame.mixer.Sound('Music/bcBattle1.ogg')
+menuMusic = pygame.mixer.Sound('Music/bcMenu1.ogg')
 
 # pygame.mixer.music.play(-1, 0.0) #-1: play forever, 0.0 = starting point
 backgroundMusicPlaying = False
@@ -220,7 +225,8 @@ keyPressedBoolean = [
 
 # list of cats on hotbar going into battle
 # name, cooldown timer
-hotbar = [["Cat", 60], ["Tank", 60], ["Axe", 60], ["Gross", 66], ["Cow", 60], ["Bird", 60], ["Fish", 126], ["Lizard", 306], ["Titan", 546], ["Baha", 3000]]
+hotbar = [["Cat", 60, 75], ["Tank", 60, 150], ["Axe", 60, 300], ["Gross", 66, 400], ["Cow", 60, 750], 
+            ["Bird", 60, 975], ["Fish", 126, 1200], ["Lizard", 306, 1500], ["Titan", 546, 1950], ["Baha", 3000, 4500], ["CatBase", 0, 0]]
 catCooldowns = {
     "Cat": 0, 
     "Tank": 0, 
@@ -231,21 +237,32 @@ catCooldowns = {
     "Fish": 0, 
     "Lizard": 0, 
     "Titan": 0, 
-    "Baha": 0
+    "Baha": 0,
+    "CatBase": 0
 }
+
+def resetCooldowns(catCooldowns):
+    for i in catCooldowns:
+        catCooldowns[i] = 0
+    return catCooldowns
+
+
 # side = "cat" or "enemy", name = unit's name, level
-def deploy(side, name, level):
+def deploy(side, name, level, ballet):
     # hotbar slot time is current time - cooldown = => then can depoly
     new_unit = Unit.Unit(side, name, level)
-    if side == 'cat' and len(catDict) < 50:
-        if catCooldowns[name] == 0:
+    for i in hotbar:
+        if i[0] == name:
+            cooldown = i[1]
+            cost = i[2]
+            break
+    if side == 'cat' and len(catDict) < 51:
+        if catCooldowns[name] == 0 and ballet >= cost:
             catDict.update({f'{name}{catAmt+1}': new_unit})
-            for i in hotbar:
-                if i[0] == name:
-                    catCooldowns[name] = i[1]
-                    break
-            deploySound.play()
-            return True
+            catCooldowns[name] = cooldown
+            deploySound.play() if name != "CatBase" else 0
+            ballet -= cost
+            return ballet
         else:
             blockSound.play()
     else: 
@@ -255,12 +272,19 @@ def deploy(side, name, level):
 
 def menuNav(direction):
     # for arrows
-    print(f"menuNav: {direction}")
+    monkey = 0
 
-workerCatLevel = 0
-def upgradeWorkerCat():
-    print("upgrade worker cat")
-    
+workerCatLevel = 1
+wallet = 1
+walletSizes = [0, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500]
+def upgradeWorkerCat(wallet, workerCatLevel):
+    if wallet > 180*workerCatLevel and workerCatLevel < 8:
+        wallet -= 180*workerCatLevel
+        workerCatLevel += 1
+        deploySound.play()
+    else:
+        blockSound.play()
+    return wallet, workerCatLevel
 def isPressed(key):
     if key[1]:
         return True
@@ -444,14 +468,14 @@ while True:
                 keyPressedBoolean[14][1] = True
             if event.key == K_TAB:
                 keyPressedBoolean[15][1] = True
-                
+    
             # for exitting program /w keyboard shortcut
             if event.key == K_ESCAPE:
-                if GAMESTATE == "PAUSE":
-                    GAMESTATE = "STAGE"
-                else:
+                if GAMESTATE != "PAUSE":
+                    previousState = GAMESTATE
                     GAMESTATE = "PAUSE"
-                print(GAMESTATE)
+                else:
+                    GAMESTATE = previousState
             if event.key == K_F4:
                 pygame.quit()   
                 sys.exit()
@@ -459,32 +483,169 @@ while True:
     currentKeyPresses = list(filter(isPressed, keyPressedBoolean))
     # print(GAMESTATE)
     match GAMESTATE:
+        case "MENU":
+            font = pygame.font.Font(None, 90)
+            if not load:
+                victory.stop()
+                defeatSound.stop()
+                menuMusic.play(-1)
+                currentStage = 0
+                load = True
+            bg = pygame.transform.scale(pygame.image.load(f'backgrounds/{stageList[currentStage]}.png'), (1920, 1080))
+            cat = pygame.transform.scale(pygame.image.load(f'Cats/Cat/Normal/Walk/frame_0.png'), (300, 200))
+            screen.fill("white")
+            screen.blit(bg, (0, 0))
+            screen.blit(cat, (850, 400))
+            message = message = font.render(f"Select Stage", True, (255, 255, 255), None)
+            screen.blit(message, (100, 500))
+            pygame.draw.rect(screen, (0, 0, 0), Rect(50, 675, 450, 90))
+            message = message = font.render(f"{stageList[currentStage]}", True, (255, 255, 255), None)
+            screen.blit(message, (100, 700))
+            for every in currentKeyPresses:
+                match every[0]:
+                    case "enter":
+                        GAMESTATE = "STAGE"
+                        load = False
+                        menuMusic.stop()
+                    case "rarrow":
+                        currentStage += 1
+                        if currentStage == len(stageList):
+                            currentStage = 0
+                        clickSound.play()
+                    case "larrow":
+                        currentStage -= 1
+                        if currentStage < 0:
+                            currentStage = len(stageList) -1
+                        clickSound.play()
+                    case _:
+                        blockSound.play()
         case "STAGE":
-            catLevel = stages[currentStage][4]
+            font = pygame.font.Font(None, 32)
+            if not load:
+                normalBattleMusic.play(-1)
+                catDict = {}
+                enemyDict = {}
+                catAmt = 0
+                enemyAmt = 0
+                catPos = {}
+                enemyPos = {}
+                win = False
+                wallet = 0
+                catCooldowns = resetCooldowns(catCooldowns)
+                deploy("cat", "CatBase", 1, wallet)
+                catAmt += 1
+                deploy("enemy", stageList[currentStage], 1, wallet)
+                enemyAmt += 1
+                load = True
+            bg = pygame.transform.scale(pygame.image.load(f'backgrounds/{stages[stageList[currentStage]][3]}'), (1920, 1080))
+            screen.blit(bg, (0, -50))
+            catList = catDict.keys()
+            if "CatBase1" not in catList:
+                GAMESTATE = "END"
+                load = False
+                normalBattleMusic.stop()
+            enemyList = enemyDict.keys()
+            if f"{stageList[currentStage]}1" not in enemyList:
+                win = True
+                GAMESTATE = "END"
+                load = False
+                normalBattleMusic.stop()
+            catPos = {}
+            if len(catDict) > 0:
+                for i in (catDict):
+                    display = catDict[i].unitUpdate(enemyPos)
+                    catPos.update({i: display["hitbox"]})
+                    screen.blit(display["animation"], display["displayPos"])
+                    if display["attack?"]:
+                        for i in display["targets"][0]:
+                            if enemyDict[i].takeDamage(display["damage"], display["targets"][1]):
+                                del enemyDict[i]
+                                del enemyPos[i]
+            enemyPos = {}
+            if len(enemyDict) > 0:
+                for i in (enemyDict):
+                    display = enemyDict[i].unitUpdate(catPos)
+                    enemyPos.update({i: display["hitbox"]})
+                    screen.blit(display["animation"], display["displayPos"])
+                    if display["attack?"]:
+                        for i in display["targets"][0]:
+                            if catDict[i].takeDamage(display["damage"], display["targets"][1]):
+                                del catDict[i]
+                                del catPos[i]
+            if len(catDict) > 0:
+                for i in (catDict):
+                    catDict[i].unitDetectionUpdate(enemyPos)
+            if len(enemyDict) > 0:
+                for i in (enemyDict):
+                    enemyDict[i].unitDetectionUpdate(catPos)
+
+            for i in catCooldowns:
+                if catCooldowns[i] > 0:
+                    catCooldowns[i] -= 1
+            catLevel = stages[stageList[currentStage]][4]
             for every in currentKeyPresses:
                 match every[0]:
                     case "q":
-                        catAmt += (1 if deploy("cat", hotbar[0][0], catLevel) else 0)
+                        thingie = deploy("cat", hotbar[0][0], catLevel, wallet)
+                        if thingie != False:
+                            catAmt += 1
+                            wallet = thingie
                     case "w":
-                        catAmt += (1 if deploy("cat", hotbar[1][0], catLevel) else 0)
+                        if currentStage < 0:
+                            thingie = deploy("cat", hotbar[1][0], catLevel, wallet)
+                            if thingie != False:
+                                catAmt += 1
+                                wallet = thingie
                     case "e":
-                        catAmt += (1 if deploy("cat", hotbar[2][0], catLevel) else 0)
+                        if currentStage < 1:
+                            thingie = deploy("cat", hotbar[2][0], catLevel, wallet)
+                            if thingie != False:
+                                catAmt += 1
+                                wallet = thingie
                     case "r":
-                        catAmt += (1 if deploy("cat", hotbar[3][0], catLevel) else 0)
+                        if currentStage < 2:
+                            thingie = deploy("cat", hotbar[3][0], catLevel, wallet)
+                            if thingie != False:
+                                catAmt += 1
+                                wallet = thingie
                     case "t":
-                        catAmt += (1 if deploy("cat", hotbar[4][0], catLevel) else 0)
+                        if currentStage < 3:
+                            thingie = deploy("cat", hotbar[4][0], catLevel, wallet)
+                            if thingie != False:
+                                catAmt += 1
+                                wallet = thingie
                     case "a":
-                        catAmt += (1 if deploy("cat", hotbar[5][0], catLevel) else 0)
+                        if currentStage < 4:
+                            thingie = deploy("cat", hotbar[5][0], catLevel, wallet)
+                            if thingie != False:
+                                catAmt += 1
+                                wallet = thingie
                     case "s":
-                        catAmt += (1 if deploy("cat", hotbar[6][0], catLevel) else 0)
+                        if currentStage < 5:
+                            thingie = deploy("cat", hotbar[6][0], catLevel, wallet)
+                            if thingie != False:
+                                catAmt += 1
+                                wallet = thingie
                     case "d":
-                        catAmt += (1 if deploy("cat", hotbar[7][0], catLevel) else 0)
+                        if currentStage < 6:
+                            thingie = deploy("cat", hotbar[7][0], catLevel, wallet)
+                            if thingie != False:
+                                catAmt += 1
+                                wallet = thingie
                     case "f":
-                        catAmt += (1 if deploy("cat", hotbar[8][0], catLevel) else 0)
+                        if currentStage < 7:
+                            thingie = deploy("cat", hotbar[8][0], catLevel, wallet)
+                            if thingie != False:
+                                catAmt += 1
+                                wallet = thingie
                     case "g":
-                        catAmt += (1 if deploy("cat", hotbar[9][0], catLevel) else 0)
+                        if currentStage < 11:
+                            thingie = deploy("cat", hotbar[9][0], catLevel, wallet)
+                            if thingie != False:
+                                catAmt += 1
+                                wallet = thingie
                     case "tab":
-                        upgradeWorkerCat()
+                        wallet, workerCatLevel = upgradeWorkerCat(wallet, workerCatLevel)
                     case _:
                         blockSound.play()
 
