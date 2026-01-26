@@ -44,7 +44,7 @@ stages = {
                         6,
                         "Bg001.png", 
                         2),
-    "Singapore": (6000, (("Doge", 150, -1, ("start", 0), (4, 10)), 
+    "Singapore": (2000, (("Doge", 150, -1, ("start", 0), (4, 10)), 
                          ("Doge", 150, -1, ("start", 30), (6, 30)), 
                          ("Snache", 150, -1, ("start", 60), (10, 30)), 
                          ("ThoseGuys", 150, -1, ("start", 90), (10, 30)), 
@@ -53,7 +53,7 @@ stages = {
                         10,
                         "Bg000.png", 
                         3),
-    "Dubai": (10000, (("Doge", 150, -1, ("start", 0), (6.67, 13.33)),
+    "Dubai": (3000, (("Doge", 150, -1, ("start", 0), (6.67, 13.33)),
                       ("Snache", 150, -1, ("start", 20), (6.67, 13.33)),
                       ("ThoseGuys", 150, -1, ("start", 40), (6.67, 13.33)),
                       ("ThoseGuys", 150, 6, ("hp", 90), (2, 4)),
@@ -64,7 +64,7 @@ stages = {
                     12,
                     "Bg005.png", 
                     3),
-    "South Africa": (14000, (("Doge", 150, -1, ("start", 0), (1, 10)),
+    "South Africa": (4000, (("Doge", 150, -1, ("start", 0), (1, 10)),
                              ("Snache", 150, -1, ("start", 0), (1, 10)),
                              ("ThoseGuys", 150, -1, ("start", 0), (1, 10)),
                              ("JackiePeng", 150, 1, ("start", 100), (0, 0)),
@@ -76,19 +76,19 @@ stages = {
                              10,
                              "Bg002.png",
                              4),
-    "Turkey": (20000, (("Doge", 150, -1, ("start", 0), (1, 10)),
+    "Turkey": (5000, (("Doge", 150, -1, ("start", 0), (1, 10)),
                        ("Snache", 150, -1, ("start", 0), (1, 10)),
                        ("ThoseGuys", 150, -1, ("start", 0), (1, 10)),
                        ("BaaBaa", 150, -1, ("start", 60), (60, 120)),
                        ("Pigge", 150, -1, ("start", 60), (60, 120)),
                        ("Hippoe", 150, -1, ("start", 80), (60, 120)),
-                       ("Gorie", 150, -1, ("start", 133.33), (60, 120)),
+                       ("Gory", 150, -1, ("start", 133.33), (60, 120)),
                        ("JackiePeng", 150, -1, ("start", 80), (60, 120)),
                        ),
                        10,
                        "Bg002.png",
                        5),
-    "Monaco": (30000, (("Doge", 150, -1, ("start", 0), (1, 10)),
+    "Monaco": (6000, (("Doge", 150, -1, ("start", 0), (1, 10)),
                        ("Snache", 150, -1, ("start", 0), (1, 10)),
                        ("ThoseGuys", 150, -1, ("start", 20), (1, 2)),
                        ("Hippoe", 150, 1, ("start", 40), (0, 0)),
@@ -98,7 +98,7 @@ stages = {
                        5,
                        "Bg005.png",
                        6),
-    "Denmark": (36000, (("Doge", 150, -1, ("start", 0), (3.33, 30)),
+    "Denmark": (7000, (("Doge", 150, -1, ("start", 0), (3.33, 30)),
                         ("Snache", 150, -1, ("start", 10), (10, 20)),
                         ("ThoseGuys", 150, -1, ("start", 20), (10, 10)),
                         ("Croco", 150, -1, ("start", 40), (10, 40)),
@@ -109,22 +109,22 @@ stages = {
                         10,
                         "Bg000.png",
                         7),
-    "Canada": (36000, (("Snache", 150, -1, ("start", 10), (5, 6.67)),
+    "Canada": (8000, (("Snache", 150, -1, ("start", 10), (5, 6.67)),
                        ("ThoseGuys", 150, -1, ("start", 20), (6.67, 10)),
                        ("Croco", 150, -1, ("start", 40), (10, 20)),
                        ("BaaBaa", 150, -1, ("start", 60), (10, 20)),
-                       ("Gorie", 150, -1, ("start", 100), (30, 60)),
+                       ("Gory", 150, -1, ("start", 100), (30, 60)),
                        ("SirSeal", 150, -1, ("start", 200), (30, 60)),
                        ("JackiePeng", 150, -1, ("start", 80), (30, 60)),
                        ("Hippoe", 150, -1, ("start", 120), (30, 60)),
                        ("Pigge", 150, -1, ("start", 120), (30, 60)),
-                       ("Gorie", 150, -1, ("start", 133.33), (30, 60)),
-                       ("Gorie", 150, -1, ("hp", 50), (0.07, 0.07)),
+                       ("Gory", 150, -1, ("start", 133.33), (30, 60)),
+                       ("Gory", 150, -1, ("hp", 50), (0.07, 0.07)),
                        ),
                        6,
                        "Bg000.png",
                        8),
-    "Colombia": (40000, (("Doge", 150, -1, ("start", 0), (3.33, 10)),
+    "Colombia": (9000, (("Doge", 150, -1, ("start", 0), (3.33, 10)),
                          ("Snache", 150, -1, ("start", 13.33), (3.33, 10)),
                          ("ThoseGuys", 150, -1, ("start", 6.67), (3.33, 10)),
                          ("Croco", 150, -1, ("start", 80), (3.33, 10)),
@@ -138,7 +138,7 @@ stages = {
                          4,
                          "Bg000.png",
                          9),
-    "Easter Island": (40000, (("ThoseGuys", 150, -1, ("start", 0), (1, 10)),
+    "Easter Island": (10000, (("ThoseGuys", 150, -1, ("start", 0), (1, 10)),
                               ("Croco", 150, -1, ("start", 20), (10, 30)),
                               ("SquireRels", 150, -1, ("start", 0), (1, 16.67)),
                               ("OneHorn", 150, 1, ("start", 0), (0, 0)),
@@ -147,10 +147,10 @@ stages = {
                               10,
                               "Bg000.png",
                               10),
-    "Hollywood": (40000, (("Hippoe", 150, -1, ("start", 0), (1, 2)),
+    "Hollywood": (10000, (("Hippoe", 150, -1, ("start", 0), (1, 2)),
                          ("Pigge", 150, -1, ("start", 0), (1, 2)),
                          ("JackiePeng", 150, -1, ("start", 40), (10, 20)),
-                         ("Gorie", 150, -1, ("start", 60), (13.33, 30)),
+                         ("Gory", 150, -1, ("start", 60), (13.33, 30)),
                          ("SirSeal", 150, -1, ("start", 80), (40, 53.33)),
                          ("LeBoin", 150, -1, ("start", 100), (73.33, 113.33)),
                          ("KangRoo", 150, -1, ("start", 120), (43.33, 80)),
@@ -159,19 +159,19 @@ stages = {
                          2,
                          "Bg000.png",
                          10),
-    "Moon": (200000, (("ThoseGuys", 150, -1, ("start", 0), (0.13, 1)),
+    "Moon": (10000, (("ThoseGuys", 150, -1, ("start", 0), (0.13, 1)),
                       ("Croco", 150, -1, ("start", 20), (0.27, 1.33)),
                       ("BBBunny", 150, -1, ("start", 20), (0.27, 1.33)),
                       ("KangRoo", 150, -1, ("start", 0), (13.33, 60)),
                       ("SirSeal", 150, -1, ("start", 0), (10, 40)),
                       ("Mooth", 150, -1, ("start", 40), (60, 80)),
-                      ("Gorie", 150, -1, ("hp", 99), (6.67, 20)),
+                      ("Gory", 150, -1, ("hp", 99), (6.67, 20)),
                       ("Pigge", 150, -1, ("hp", 99), (6.67, 20)),
                       ("ThoseGuys", 150, -1, ("hp", 99), (0.67, 2)),
                       ("Mooth", 150, 4, ("hp", 99), (0.07, 0.07)),
                       ("KangRoo", 150, 6, ("hp", 99), (0.07, 4)),
                       ("SirSeal", 150, 6, ("hp", 99), (4, 13.33)),
-                      ("Gorie", 150, 10, ("hp", 99), (0.07, 1.33)),
+                      ("Gory", 150, 10, ("hp", 99), (0.07, 1.33)),
                       ("BunBun", 150, -2, ("hp", 70), (0, 0)),
                       ),
                       8,
@@ -226,7 +226,7 @@ keyPressedBoolean = [
 # list of cats on hotbar going into battle
 # name, cooldown timer
 hotbar = [["Cat", 60, 75], ["Tank", 60, 150], ["Axe", 60, 300], ["Gross", 66, 400], ["Cow", 60, 750], 
-            ["Bird", 60, 975], ["Fish", 126, 1200], ["Lizard", 306, 1500], ["Titan", 546, 1950], ["Baha", 3000, 4500], ["CatBase", 0, 0]]
+            ["Bird", 60, 975], ["Fish", 126, 1200], ["Lizard", 306, 1500], ["Titan", 546, 1950], ["Baha", 3000, 0], ["CatBase", 0, 0]]
 catCooldowns = {
     "Cat": 0, 
     "Tank": 0, 
@@ -324,41 +324,37 @@ def basehpcheck(value):
         return True
 
 def enemyDeployCheck(enemy):
-    # print("check")
     match enemy[0]:
         case "start":
             if "start" not in STAGESTATES:
                 return False
-            if int(time.time()) - stageStartTime >= int(enemy[1]): # if current time from start of stage == 1st spawn time or last time
+            if currentTime - int(enemy[1]) >= random.randint(int(enemy[2][0]), int(enemy[2][1])): # if current time from start of stage == 1st spawn time or last time
                 if enemy[4] == -1: # if remaining units left
-                    enemy[1] = time.time() + random.randint(enemy[2][0], enemy[2][1]) #updates last time
+                    enemy[1] = currentTime #updates last time
                     return True
                 elif enemy[4] > 0:
                     enemy[4] -= 1
-                    enemy[1] = time.time() + random.randint(enemy[2][0], enemy[2][1]) #updates last time
+                    enemy[1] = currentTime #updates last time
+                    return True
             return False
         case "hp":
-            if "hp" not in STAGESTATES:
-                return False
-            if int(time.time()) - lastHpTime >= int(enemy[1]): # if current time from start of stage == 1st spawn time or last time
+            if currentTime - int(enemy[1]) >= random.randint(int(enemy[2][0]), int(enemy[2][1])): # if current time from start of stage == 1st spawn time or last time
                 if enemy[4] == -1: # if remaining units left
-                    enemy[1] = time.time() + random.randint(enemy[2][0], enemy[2][1]) #updates last time
+                    enemy[1] = currentTime #updates last time
                     return True
                 elif enemy[4] > 0:
                     enemy[4] -= 1
-                    enemy[1] = time.time() + random.randint(enemy[2][0], enemy[2][1]) #updates last time
+                    enemy[1] = currentTime #updates last time
                     return True
             return False
         case "boss":
-            if "boss" not in STAGESTATES:
-                return False
-            if int(time.time()) - lastBossTime >= int(enemy[1]): # if current time from start of stage == 1st spawn time or last time
+            if currentTime - int(enemy[1]) >= random.randint(int(enemy[2][0]), int(enemy[2][1])): # if current time from start of stage == 1st spawn time or last time
                 if enemy[4] == -1: # if remaining units left
-                    enemy[1] = time.time() + random.randint(enemy[2][0], enemy[2][1]) #updates last time
+                    enemy[1] = currentTime #updates last time
                     return True
                 elif enemy[4] > 0:
                     enemy[4] -= 1
-                    enemy[1] = time.time() + random.randint(enemy[2][0], enemy[2][1]) #updates last time
+                    enemy[1] = currentTime #updates last time
                 else:
                     return False
             else:
@@ -481,6 +477,7 @@ while True:
                         blockSound.play()
         case "STAGE":
             font = pygame.font.Font(None, 32)
+            print(stageList[currentStage])
             if not load:
                 normalBattleMusic.play(-1)
                 catDict = {}
@@ -495,9 +492,48 @@ while True:
                 catCooldowns = resetCooldowns(catCooldowns)
                 deploy("cat", "CatBase", 1, wallet)
                 catAmt += 1
-                deploy("enemy", stageList[currentStage], 100, wallet)
+                deploy("enemy", stageList[currentStage], stages[stageList[currentStage]][0]/10, wallet)
                 enemyAmt += 1
+                #============
+                # STAGE INIT
+                #============
+                STAGESTATES.clear()
+                enemies.clear()
+
+                for i in stages[stageList[currentStage]][1]:
+                    enemies.append([i[3][0], i[3][1], i[4], i[2], i[2], i[0], i[1]])
+                    '''
+                    0. enemies[startTrigger,
+                    1. last time(inits as 1st spawn time), 
+                    2. interval tuple, 
+                    3. original amount of units, 
+                    4. remaining amount of units, 
+                    5. name, 
+                    6. health multiplier
+                    '''
+                currentMoney = 0
+                workerCatLevel = 0 if stageList[currentStage] != "Moon" else 8
+                currentOpponentBaseHp = stages[stageList[currentStage]][0]
+                numOfEnemies = 0
+                STAGESTAGE = 1
+                STAGESTATES.append("start")
+                baseHpProgression = 0
+                boss = False
+                enterBattleSound.play()
+                stageStartTime = int(time.time())
+
+                baseHpTriggerUnits = [unit for unit in stages[stageList[currentStage]][1] if unit[3][0] == "hp"] # gets enemy tuples that have hp triggers
+                baseHpTriggerUnits.sort(key=lambda x: x[3][1], reverse=True)
+                # need list of just base hps so that triggers can be detected
+                print(baseHpTriggerUnits)
+                lastHpTime = 0
+                lastBossTime = 0
+
+                bossUnits = [unit for unit in stages[stageList[currentStage]][1] if unit[2] == -2]
+
                 load = True
+            currentBaseHp = enemyDict[f"{stageList[currentStage]}1"].getHealth() if f"{stageList[currentStage]}1" in enemyDict else 0
+            currentTime = int(time.time() - stageStartTime)
             bg = pygame.transform.scale(pygame.image.load(f'backgrounds/{stages[stageList[currentStage]][3]}'), (1920, 1080))
             screen.blit(bg, (0, -50))
             catList = catDict.keys()
@@ -521,6 +557,7 @@ while True:
                         attackSound.play()
                         for i in display["targets"][0]:
                             if enemyDict[i].takeDamage(display["damage"], display["targets"][1]):
+                                wallet += enemyDict[i].getMoney()*2
                                 del enemyDict[i]
                                 del enemyPos[i]
             enemyPos = {}
@@ -562,7 +599,7 @@ while True:
                         else: 
                             blockSound.play()
                     case "e":
-                        if currentStage > 1:
+                        if currentStage > 0:
                             thingie = deploy("cat", hotbar[2][0], catLevel, wallet)
                             if thingie != False:
                                 catAmt += 1
@@ -645,46 +682,6 @@ while True:
             screen.blit(enemyHealth, (0, 196))
             catHealth = font.render(f"Cat Base Health {catDict["CatBase1"].getHealth() if "CatBase1" in catDict else 0}", True, ((0, 0, 0) if currentStage < 12 else (255, 255, 255)), None)
             screen.blit(catHealth, (0, 228))
-            if STAGESTAGE == 0:
-                #============
-                # STAGE INIT
-                #============
-                STAGESTATES.clear()
-                enemies.clear()
-
-                for i in stages[stageList[currentStage]][1]:
-                    enemies.append([i[3][0], i[3][1], i[4], i[2], i[2], i[0], i[1]])
-                    '''
-                    0. enemies[startTrigger,
-                    1. last time(inits as 1st spawn time), 
-                    2. interval tuple, 
-                    3. original amount of units, 
-                    4. remaining amount of units, 
-                    5. name, 
-                    6. health multiplier
-                    '''
-                currentMoney = 0
-                richCatLevel = 0
-                currentOpponentBaseHp = stages[stageList[currentStage]][0]
-                numOfEnemies = 0
-                stageStartTime = time.time()
-                STAGESTAGE = 1
-                STAGESTATES.append("start")
-                baseHpProgression = 0
-                boss = False
-                enterBattleSound.play()
-                stageStartTime = int(time.time())
-
-                baseHpTriggerUnits = [unit for unit in stages[stageList[currentStage]][1] if unit[3][0] == "hp"] # gets enemy tuples that have hp triggers
-                baseHpTriggerUnits.sort(key=lambda x: x[3][1], reverse=True)
-                # need list of just base hps so that triggers can be detected
-                print(baseHpTriggerUnits)
-                lastHpTime = 0
-                lastBossTime = 0
-
-                bossUnits = [unit for unit in stages[stageList[currentStage]][1] if unit[2] == -2]
-
-                print(f"enemies:{enemies}")
             # if len(baseHpTriggerUnits) > 0 and "hp" not in STAGESTATES: # if any base hp triggers in current stage
             #     # baseHpPercentage = currentOpponentBaseHp/stages[stageList[currentStage]][0]*100 # current base hp percentage
             #     # if baseHpTriggerUnits[0][3][1] > baseHpPercentage > baseHpTriggerUnits[1][3][1]:
@@ -710,18 +707,25 @@ while True:
                     STAGESTATES.append("boss")
                     lastBossTime = time.time() #used for unit deployment referencing
                     currentEnemies.append(bossUnits[0])
+            full = True if len(enemyDict) == stages[stageList[currentStage]][2] else False
+
+            if len(enemyDict) < stages[stageList[currentStage]][2]:
+                full = False
+                
 
             currentEnemies = list(filter(enemyDeployCheck, enemies))
+            print(f"CurrentEnemies: {currentEnemies}")
+            print(len(enemyDict))
             if currentEnemies: # checks if list is empty and is under enemy unit cap
                 for i in currentEnemies:
-                    if numOfEnemies<=stages[stageList[currentStage]][2]:
+                    if len(enemyDict)<=stages[stageList[currentStage]][2]:
                         deploy("enemy", i[5], i[6], wallet)
-                        numOfEnemies += 1
+                        enemyAmt += 1
 
             if "hp" in STAGESTATES and len(baseHpTriggerUnits) > 0:
                 STAGESTATES.remove("hp")
 
-            STAGESTAGE += 1
+            print(f"{currentEnemies}")
 
         case "END":
             normalBattleMusic.stop()
