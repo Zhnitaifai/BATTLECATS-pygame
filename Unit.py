@@ -52,7 +52,7 @@ class Unit:
             self.walkAnimations = []
             for i in range(self.stats[7]):    
                 animation = pygame.image.load(f'Enemies/{name}/Walk/frame_{i}.png')
-                self.walkAnimations.append(pygame.transform.scale(animation, (170, 700 if self.stats[3] == 0 else ((500, 350) if self.name != "BunBun" else (750, 500)))))
+                self.walkAnimations.append(pygame.transform.scale(animation, ((170, 700) if self.stats[3] == 0 else ((500, 350) if self.name != "BunBun" else (750, 500)))))
             self.attackAnimations = []
             for i in range(self.stats[8]):    
                 animation = pygame.image.load(f'Enemies/{name}/Attack/frame_{i}.png')

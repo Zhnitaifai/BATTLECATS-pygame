@@ -491,6 +491,7 @@ while True:
                 enemyPos = {}
                 win = False
                 wallet = 0
+                workerCatLevel = 1
                 catCooldowns = resetCooldowns(catCooldowns)
                 deploy("cat", "CatBase", 1, wallet)
                 catAmt += 1
@@ -551,143 +552,209 @@ while True:
                             catAmt += 1
                             wallet = thingie
                     case "w":
-                        if currentStage < 0:
+                        if currentStage > 0:
                             thingie = deploy("cat", hotbar[1][0], catLevel, wallet)
                             if thingie != False:
                                 catAmt += 1
                                 wallet = thingie
+                        else: 
+                            blockSound.play()
                     case "e":
-                        if currentStage < 1:
+                        if currentStage > 1:
                             thingie = deploy("cat", hotbar[2][0], catLevel, wallet)
                             if thingie != False:
                                 catAmt += 1
                                 wallet = thingie
+                        else: 
+                            blockSound.play()
                     case "r":
-                        if currentStage < 2:
+                        if currentStage > 2:
                             thingie = deploy("cat", hotbar[3][0], catLevel, wallet)
                             if thingie != False:
                                 catAmt += 1
                                 wallet = thingie
+                        else: 
+                            blockSound.play()
                     case "t":
-                        if currentStage < 3:
+                        if currentStage > 3:
                             thingie = deploy("cat", hotbar[4][0], catLevel, wallet)
                             if thingie != False:
                                 catAmt += 1
                                 wallet = thingie
+                        else: 
+                            blockSound.play()
                     case "a":
-                        if currentStage < 4:
+                        if currentStage > 4:
                             thingie = deploy("cat", hotbar[5][0], catLevel, wallet)
                             if thingie != False:
                                 catAmt += 1
                                 wallet = thingie
+                        else: 
+                            blockSound.play()
                     case "s":
-                        if currentStage < 5:
+                        if currentStage > 5:
                             thingie = deploy("cat", hotbar[6][0], catLevel, wallet)
                             if thingie != False:
                                 catAmt += 1
                                 wallet = thingie
+                        else: 
+                            blockSound.play()
                     case "d":
-                        if currentStage < 6:
+                        if currentStage > 6:
                             thingie = deploy("cat", hotbar[7][0], catLevel, wallet)
                             if thingie != False:
                                 catAmt += 1
                                 wallet = thingie
+                        else: 
+                            blockSound.play()
                     case "f":
-                        if currentStage < 7:
+                        if currentStage > 7:
                             thingie = deploy("cat", hotbar[8][0], catLevel, wallet)
                             if thingie != False:
                                 catAmt += 1
                                 wallet = thingie
+                        else: 
+                            blockSound.play()
                     case "g":
-                        if currentStage < 11:
+                        if currentStage > 11:
                             thingie = deploy("cat", hotbar[9][0], catLevel, wallet)
                             if thingie != False:
                                 catAmt += 1
                                 wallet = thingie
+                        else: 
+                            blockSound.play()
                     case "tab":
                         wallet, workerCatLevel = upgradeWorkerCat(wallet, workerCatLevel)
                     case _:
                         blockSound.play()
 
-            if inStage:
-                if STAGESTAGE == 0:
-                    #============
-                    # STAGE INIT
-                    #============
-                    STAGESTATES.clear()
-                    enemies.clear()
+            maxWallet = walletSizes[workerCatLevel]
+            wallet += 1 + workerCatLevel*.5
+            if wallet > maxWallet:
+                wallet = maxWallet
+            print(currentStage)
+            # x for money = 1700
+            money = font.render(f"${round(wallet)}/{maxWallet}", True, ((0, 0, 0) if currentStage < 12 else (255, 255, 255)), None)
+            screen.blit(money, (0, 100))
+            workerLevel = font.render(f"Worker Level {workerCatLevel}", True, ((0, 0, 0) if currentStage < 12 else (255, 255, 255)), None)
+            screen.blit(workerLevel, (0, 132))
+            upgradeCost = font.render(f"To Upgrade: ${180*workerCatLevel}", True, ((0, 0, 0) if currentStage < 12 else (255, 255, 255)), None)
+            screen.blit(upgradeCost, (0, 164))
 
-                    for i in stages[stageList[currentStage]][1]:
-                        enemies.append([i[3][0], i[3][1], i[4], i[2], i[2], i[0], i[1]])
-                        '''
-                        0. enemies[startTrigger,
-                        1. last time(inits as 1st spawn time), 
-                        2. interval tuple, 
-                        3. original amount of units, 
-                        4. remaining amount of units, 
-                        5. name, 
-                        6. health multiplier
-                        '''
-                    currentMoney = 0
-                    richCatLevel = 0
-                    currentOpponentBaseHp = stages[stageList[currentStage]][0]
-                    numOfEnemies = 0
-                    stageStartTime = time.time()
-                    STAGESTAGE = 1
-                    STAGESTATES.append("start")
-                    baseHpProgression = 0
-                    boss = False
-                    enterBattleSound.play()
-                    stageStartTime = int(time.time())
+            if STAGESTAGE == 0:
+                #============
+                # STAGE INIT
+                #============
+                STAGESTATES.clear()
+                enemies.clear()
 
-                    baseHpTriggerUnits = [unit for unit in stages[stageList[currentStage]][1] if unit[3][0] == "hp"] # gets enemy tuples that have hp triggers
-                    baseHpTriggerUnits.sort(key=lambda x: x[3][1], reverse=True)
-                    # need list of just base hps so that triggers can be detected
-                    print(baseHpTriggerUnits)
-                    lastHpTime = 0
-                    lastBossTime = 0
+                for i in stages[stageList[currentStage]][1]:
+                    enemies.append([i[3][0], i[3][1], i[4], i[2], i[2], i[0], i[1]])
+                    '''
+                    0. enemies[startTrigger,
+                    1. last time(inits as 1st spawn time), 
+                    2. interval tuple, 
+                    3. original amount of units, 
+                    4. remaining amount of units, 
+                    5. name, 
+                    6. health multiplier
+                    '''
+                currentMoney = 0
+                richCatLevel = 0
+                currentOpponentBaseHp = stages[stageList[currentStage]][0]
+                numOfEnemies = 0
+                stageStartTime = time.time()
+                STAGESTAGE = 1
+                STAGESTATES.append("start")
+                baseHpProgression = 0
+                boss = False
+                enterBattleSound.play()
+                stageStartTime = int(time.time())
 
-                    bossUnits = [unit for unit in stages[stageList[currentStage]][1] if unit[2] == -2]
+                baseHpTriggerUnits = [unit for unit in stages[stageList[currentStage]][1] if unit[3][0] == "hp"] # gets enemy tuples that have hp triggers
+                baseHpTriggerUnits.sort(key=lambda x: x[3][1], reverse=True)
+                # need list of just base hps so that triggers can be detected
+                print(baseHpTriggerUnits)
+                lastHpTime = 0
+                lastBossTime = 0
 
-                    print(f"enemies:{enemies}")
-                # if len(baseHpTriggerUnits) > 0 and "hp" not in STAGESTATES: # if any base hp triggers in current stage
-                #     # baseHpPercentage = currentOpponentBaseHp/stages[stageList[currentStage]][0]*100 # current base hp percentage
-                #     # if baseHpTriggerUnits[0][3][1] > baseHpPercentage > baseHpTriggerUnits[1][3][1]:
-                #     if currentOpponentBaseHp/stages[stageList[currentStage]][0]*100 <= baseHpTriggerUnits[0+baseHpProgression][3][1]:
-                #         STAGESTATES.append("hp")
-                #     if "hp" in STAGESTATES:
-                #         currentHpEnemies = list(filter(hpTriggerCheck, baseHpTriggerUnits))
-                #         if len(currentHpEnemies) > 0:
-                #             baseHpProgression+1
-                #             for i in currentHpEnemies:
-                #                 currentEnemies.append(i)
-                if len(baseHpTriggerUnits) > 0 and "hp" not in STAGESTATES:
-                    baseHpPercentage = (currentBaseHp / stages[stageList[currentStage]][0]) * 100
-                    nextThreshold = baseHpTriggerUnits[0][3][1]
-                
-                    if baseHpPercentage <= nextThreshold:
-                        STAGESTATES.append("hp") 
-                        lastHpTime = time.time()
-                        baseHpTriggerUnits.pop(0)
+                bossUnits = [unit for unit in stages[stageList[currentStage]][1] if unit[2] == -2]
 
-                if len(bossUnits) > 0 and "boss" not in STAGESTATES: #checks if boss has been triggered
-                    if currentOpponentBaseHp/stages[stageList[currentStage]][0]*100 <= bossUnits[0][3][1]:
-                        STAGESTATES.append("boss")
-                        lastBossTime = time.time() #used for unit deployment referencing
-                        currentEnemies.append(bossUnits[0])
+                print(f"enemies:{enemies}")
+            # if len(baseHpTriggerUnits) > 0 and "hp" not in STAGESTATES: # if any base hp triggers in current stage
+            #     # baseHpPercentage = currentOpponentBaseHp/stages[stageList[currentStage]][0]*100 # current base hp percentage
+            #     # if baseHpTriggerUnits[0][3][1] > baseHpPercentage > baseHpTriggerUnits[1][3][1]:
+            #     if currentOpponentBaseHp/stages[stageList[currentStage]][0]*100 <= baseHpTriggerUnits[0+baseHpProgression][3][1]:
+            #         STAGESTATES.append("hp")
+            #     if "hp" in STAGESTATES:
+            #         currentHpEnemies = list(filter(hpTriggerCheck, baseHpTriggerUnits))
+            #         if len(currentHpEnemies) > 0:
+            #             baseHpProgression+1
+            #             for i in currentHpEnemies:
+            #                 currentEnemies.append(i)
+            if len(baseHpTriggerUnits) > 0 and "hp" not in STAGESTATES:
+                baseHpPercentage = (currentBaseHp / stages[stageList[currentStage]][0]) * 100
+                nextThreshold = baseHpTriggerUnits[0][3][1]
+            
+                if baseHpPercentage <= nextThreshold:
+                    STAGESTATES.append("hp") 
+                    lastHpTime = time.time()
+                    baseHpTriggerUnits.pop(0)
 
-                currentEnemies = list(filter(enemyDeployCheck, enemies))
-                if currentEnemies: # checks if list is empty and is under enemy unit cap
-                    for i in currentEnemies:
-                        if numOfEnemies<=stages[stageList[currentStage]][2]:
-                            deploy("enemy", i[5], i[6])
-                            numOfEnemies += 1
+            if len(bossUnits) > 0 and "boss" not in STAGESTATES: #checks if boss has been triggered
+                if currentOpponentBaseHp/stages[stageList[currentStage]][0]*100 <= bossUnits[0][3][1]:
+                    STAGESTATES.append("boss")
+                    lastBossTime = time.time() #used for unit deployment referencing
+                    currentEnemies.append(bossUnits[0])
 
-                if "hp" in STAGESTATES and len(baseHpTriggerUnits) > 0:
-                    STAGESTATES.remove("hp")
+            currentEnemies = list(filter(enemyDeployCheck, enemies))
+            if currentEnemies: # checks if list is empty and is under enemy unit cap
+                for i in currentEnemies:
+                    if numOfEnemies<=stages[stageList[currentStage]][2]:
+                        deploy("enemy", i[5], i[6], wallet)
+                        numOfEnemies += 1
 
-                STAGESTAGE += 1
-                    
+            if "hp" in STAGESTATES and len(baseHpTriggerUnits) > 0:
+                STAGESTATES.remove("hp")
+
+            STAGESTAGE += 1
+
+        case "END":
+            normalBattleMusic.stop()
+            font = pygame.font.Font(None, 32) 
+            if not load:
+                if win:
+                    message = font.render(f"VICTORY", True, (0, 0, 0), None)
+                    victory.play()
+                else:
+                    message = font.render(f"DEFEAT", True, (0, 0, 0), None)
+                    defeatSound.play()
+                endscreen = pygame.image.load("backgrounds/rick-astley.jpg")
+                endscreen = pygame.transform.scale(endscreen, (2000, 1000))
+                if random.randint(0, 50) == 50:
+                    screen.blit(endscreen, (0, 0))
+                else: 
+                    screen.fill("white")
+                screen.blit(message, (1000, 500))
+                message = font.render(f"Press Enter to Continue", True, (0, 0, 0), None)
+                screen.blit(message, (1000, 532))
+                for i in catDict:
+                    del i
+                for i in catPos:
+                    del i
+                for i in enemyDict:
+                    del i 
+                for i in enemyPos:
+                    del i
+                load = True   
+            for every in currentKeyPresses:
+                match every[0]:
+                    case "enter":
+                        GAMESTATE = "MENU"
+                        load = False
+                    case _:
+                        blockSound.play()
+
         case _:
             for every in currentKeyPresses:
                 match every[0]:
