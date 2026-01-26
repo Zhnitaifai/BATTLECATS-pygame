@@ -226,7 +226,7 @@ keyPressedBoolean = [
 # list of cats on hotbar going into battle
 # name, cooldown timer
 hotbar = [["Cat", 60, 75], ["Tank", 60, 150], ["Axe", 60, 300], ["Gross", 66, 400], ["Cow", 60, 750], 
-            ["Bird", 60, 975], ["Fish", 126, 1200], ["Lizard", 306, 1500], ["Titan", 546, 1950], ["Baha", 3000, 00], ["CatBase", 0, 0]]
+            ["Bird", 60, 975], ["Fish", 126, 1200], ["Lizard", 306, 1500], ["Titan", 546, 1950], ["Baha", 3000, 4500], ["CatBase", 0, 0]]
 catCooldowns = {
     "Cat": 0, 
     "Tank": 0, 
@@ -427,7 +427,7 @@ while True:
                         clickSound.play()
                     case "larrow":
                         currentStage -= 1
-                        if currentStage < -1:
+                        if currentStage < 0:
                             currentStage = len(stageList) -1
                         clickSound.play()
                     case _:
@@ -470,8 +470,8 @@ while True:
                     catPos.update({i: display["hitbox"]})
                     screen.blit(display["animation"], display["displayPos"])
                     if display["attack?"]:
-                        for i in display["targets"]:
-                            if enemyDict[i].takeDamage(display["damage"]):
+                        for i in display["targets"][0]:
+                            if enemyDict[i].takeDamage(display["damage"], display["targets"][1]):
                                 del enemyDict[i]
                                 del enemyPos[i]
             enemyPos = {}
@@ -481,8 +481,8 @@ while True:
                     enemyPos.update({i: display["hitbox"]})
                     screen.blit(display["animation"], display["displayPos"])
                     if display["attack?"]:
-                        for i in display["targets"]:
-                            if catDict[i].takeDamage(display["damage"]):
+                        for i in display["targets"][0]:
+                            if catDict[i].takeDamage(display["damage"], display["targets"][1]):
                                 del catDict[i]
                                 del catPos[i]
             if len(catDict) > 0:
@@ -504,50 +504,59 @@ while True:
                             catAmt += 1
                             wallet = thingie
                     case "w":
-                        thingie = deploy("cat", hotbar[1][0], catLevel, wallet)
-                        if thingie != False:
-                            catAmt += 1
-                            wallet = thingie
+                        if currentStage < 0:
+                            thingie = deploy("cat", hotbar[1][0], catLevel, wallet)
+                            if thingie != False:
+                                catAmt += 1
+                                wallet = thingie
                     case "e":
-                        thingie = deploy("cat", hotbar[2][0], catLevel, wallet)
-                        if thingie != False:
-                            catAmt += 1
-                            wallet = thingie
+                        if currentStage < 1:
+                            thingie = deploy("cat", hotbar[2][0], catLevel, wallet)
+                            if thingie != False:
+                                catAmt += 1
+                                wallet = thingie
                     case "r":
-                        thingie = deploy("cat", hotbar[3][0], catLevel, wallet)
-                        if thingie != False:
-                            catAmt += 1
-                            wallet = thingie
+                        if currentStage < 2:
+                            thingie = deploy("cat", hotbar[3][0], catLevel, wallet)
+                            if thingie != False:
+                                catAmt += 1
+                                wallet = thingie
                     case "t":
-                        thingie = deploy("cat", hotbar[4][0], catLevel, wallet)
-                        if thingie != False:
-                            catAmt += 1
-                            wallet = thingie
+                        if currentStage < 3:
+                            thingie = deploy("cat", hotbar[4][0], catLevel, wallet)
+                            if thingie != False:
+                                catAmt += 1
+                                wallet = thingie
                     case "a":
-                        thingie = deploy("cat", hotbar[5][0], catLevel, wallet)
-                        if thingie != False:
-                            catAmt += 1
-                            wallet = thingie
+                        if currentStage < 4:
+                            thingie = deploy("cat", hotbar[5][0], catLevel, wallet)
+                            if thingie != False:
+                                catAmt += 1
+                                wallet = thingie
                     case "s":
-                        thingie = deploy("cat", hotbar[6][0], catLevel, wallet)
-                        if thingie != False:
-                            catAmt += 1
-                            wallet = thingie
+                        if currentStage < 5:
+                            thingie = deploy("cat", hotbar[6][0], catLevel, wallet)
+                            if thingie != False:
+                                catAmt += 1
+                                wallet = thingie
                     case "d":
-                        thingie = deploy("cat", hotbar[7][0], catLevel, wallet)
-                        if thingie != False:
-                            catAmt += 1
-                            wallet = thingie
+                        if currentStage < 6:
+                            thingie = deploy("cat", hotbar[7][0], catLevel, wallet)
+                            if thingie != False:
+                                catAmt += 1
+                                wallet = thingie
                     case "f":
-                        thingie = deploy("cat", hotbar[8][0], catLevel, wallet)
-                        if thingie != False:
-                            catAmt += 1
-                            wallet = thingie
+                        if currentStage < 7:
+                            thingie = deploy("cat", hotbar[8][0], catLevel, wallet)
+                            if thingie != False:
+                                catAmt += 1
+                                wallet = thingie
                     case "g":
-                        thingie = deploy("cat", hotbar[9][0], catLevel, wallet)
-                        if thingie != False:
-                            catAmt += 1
-                            wallet = thingie
+                        if currentStage < 11:
+                            thingie = deploy("cat", hotbar[9][0], catLevel, wallet)
+                            if thingie != False:
+                                catAmt += 1
+                                wallet = thingie
                     case "tab":
                         wallet, workerCatLevel = upgradeWorkerCat(wallet, workerCatLevel)
                     case _:
@@ -556,13 +565,13 @@ while True:
             wallet += 1 + workerCatLevel*.5
             if wallet > maxWallet:
                 wallet = maxWallet
-            
+            print(currentStage)
             # x for money = 1700
-            money = font.render(f"${round(wallet)}/{maxWallet}", True, (0, 0, 0), None)
+            money = font.render(f"${round(wallet)}/{maxWallet}", True, ((0, 0, 0) if currentStage < 12 else (255, 255, 255)), None)
             screen.blit(money, (0, 100))
-            workerLevel = font.render(f"Worker Level {workerCatLevel}", True, (0, 0, 0), None)
+            workerLevel = font.render(f"Worker Level {workerCatLevel}", True, ((0, 0, 0) if currentStage < 12 else (255, 255, 255)), None)
             screen.blit(workerLevel, (0, 132))
-            upgradeCost = font.render(f"To Upgrade: ${180*workerCatLevel}", True, (0, 0, 0), None)
+            upgradeCost = font.render(f"To Upgrade: ${180*workerCatLevel}", True, ((0, 0, 0) if currentStage < 12 else (255, 255, 255)), None)
             screen.blit(upgradeCost, (0, 164))
                 
         case "END":

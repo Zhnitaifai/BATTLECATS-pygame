@@ -67,6 +67,7 @@ class Unit:
     def unitUpdate(self, positions):
         attack = False
         targets = []
+        antiRed = False
         self.attackCooldown -= (1 if self.attackCooldown > 0 else 0)
         if self.state == 'walk':
             self.currentFrame += 1
@@ -90,7 +91,7 @@ class Unit:
                     self.attackState = "backswing"
                     self.attackCooldown = self.stats[5]
                     attack = True
-                    targets = self.unitTargetUpdate(positions, self.stats[9])
+                    targets, antiRed = self.unitTargetUpdate(positions, self.stats[9])
                 case "backswing":
                     self.currentFrame += 1
                     if self.currentFrame >= len(self.attackAnimations):
@@ -119,7 +120,7 @@ class Unit:
             "hitbox": (self.xHitbox, self.y + (400 if self.stats[3] == 0 else 0)), 
             "attack?": attack, 
             "damage": self.attack, 
-            "targets": targets
+            "targets": (targets, antiRed)
         }
     
     def unitDetectionUpdate(self, positions):
@@ -139,6 +140,7 @@ class Unit:
     
     def unitTargetUpdate(self, positions, attackType):
         targets = []
+        antiRed = True if self.name in ["Axe", "Fish"] else False
         if self.type == 'cat':
             detectBox = Rect(self.xHitbox-self.stats[2], self.y-400, self.stats[2], 1000)    
         else:
@@ -147,11 +149,12 @@ class Unit:
             if detectBox.collidepoint(positions[i][0], positions[i][1]):
                 targets.append(i)
                 if attackType == 0:
-                    return targets
-        return targets
+                    return targets, antiRed
+        return targets, antiRed
     
-    def takeDamage(self, damage):
-        self.health -= damage
+    def takeDamage(self, damage, antired):
+        red = False if self.name not in ["BBBunny", "OneHorn", "Pigge"] else True
+        self.health -= damage*(2 if red and antired else 1)
         if self.knockbackCount != 0:
             if self.health < self.stats[0]/self.knockback*self.knockbackCount:
                 self.state = 'knockback'
