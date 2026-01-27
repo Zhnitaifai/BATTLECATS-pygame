@@ -1,0 +1,7 @@
+  0. enemies[startTrigger,
+	1. last time(inits as 1st spawn time), 
+	2. interval tuple, 
+	3. original amount of units, 
+	4. remaining amount of units, 
+	5. name, 
+	6. health multiplier

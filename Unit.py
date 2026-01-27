@@ -39,7 +39,7 @@ class Unit:
             self.currentFrame = 0
             self.x = 1400 if self.name != "CatBase" else 1600
             self.y = 100 if self.name == "CatBase" else random.randint(*((400, 450) if self.name != "Baha" else (200, 250)))
-            self.xHitbox = self.x+200
+            self.xHitbox = self.x+200 if self.name != "CatBase" else 10
         elif type == 'enemy':
             self.stats = open(f'Enemies/{name}/stats.csv')
             self.stats = self.stats.readline().split(",")
@@ -59,7 +59,7 @@ class Unit:
                 self.attackAnimations.append(pygame.transform.scale(animation, ((500, 350) if self.name != "BunBun" else (750, 500))))
             self.currentFrame = 0
             self.currentAnimation = 0
-            self.x = 200 if self.stats[3] != 0 else 100
+            self.x = 0 if self.stats[3] != 0 else 100
             self.y = 0 if self.stats[3] == 0 else random.randint(*((400, 450) if self.name != "BunBun" else (200, 250)))
             self.xHitbox = self.x+200
             #(-100 if self.stats[3] == 0 else 200)
@@ -105,7 +105,7 @@ class Unit:
             self.currentAnimation = self.walkAnimations[0]
             if self.attackCooldown == 0:
                 self.state = "walk"
-        self.xHitbox = self.x+(200 if self.type == 'cat' else (300 if self.stats[3] != 0 else 100))
+        self.xHitbox = self.x+((200 if self.name != "CatBase" else 10) if self.type == 'cat' else (300 if self.stats[3] != 0 else 100))
         if self.state == 'knockback':
             if self.knockbackFrame != 0:
                 self.x -= (-15 if self.type == 'cat' else 15)
@@ -165,4 +165,8 @@ class Unit:
         return False
             
             
-            
+    def getHealth(self):
+        return self.health
+
+    def getMoney(self):
+        return self.stats[0] + self.attack
