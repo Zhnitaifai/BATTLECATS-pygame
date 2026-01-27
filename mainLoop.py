@@ -512,7 +512,7 @@ while True:
                     6. health multiplier
                     '''
                 currentMoney = 0
-                workerCatLevel = 0 if stageList[currentStage] != "Moon" else 8
+                workerCatLevel = 1
                 currentOpponentBaseHp = stages[stageList[currentStage]][0]
                 numOfEnemies = 0
                 STAGESTAGE = 1
@@ -521,6 +521,8 @@ while True:
                 boss = False
                 enterBattleSound.play()
                 stageStartTime = int(time.time())
+                fullTimer = 0
+                full = False
 
                 baseHpTriggerUnits = [unit for unit in stages[stageList[currentStage]][1] if unit[3][0] == "hp"] # gets enemy tuples that have hp triggers
                 baseHpTriggerUnits.sort(key=lambda x: x[3][1], reverse=True)
@@ -707,18 +709,27 @@ while True:
                     STAGESTATES.append("boss")
                     lastBossTime = time.time() #used for unit deployment referencing
                     currentEnemies.append(bossUnits[0])
-            full = True if len(enemyDict) == stages[stageList[currentStage]][2] else False
-
-            if len(enemyDict) < stages[stageList[currentStage]][2]:
+           
+            if len(enemyDict) > stages[stageList[currentStage]][2]:
+                full = True 
+            if len(enemyDict) < stages[stageList[currentStage]][2]+1 and full:
+                print("money")
                 full = False
-                
+                fullTimer = 30
+            
+            fullTimer -= 1 if fullTimer > 0 else 0
+            
+            fullthingie = font.render(f"Full: {full}", True, ((0, 0, 0) if currentStage < 12 else (255, 255, 255)), None)
+            timer = font.render(f"FullTimer: {fullTimer}", True, ((0, 0, 0) if currentStage < 12 else (255, 255, 255)), None)
+            screen.blit(timer, (500, 228)) 
+            screen.blit(fullthingie, (500, 196))
 
             currentEnemies = list(filter(enemyDeployCheck, enemies))
             print(f"CurrentEnemies: {currentEnemies}")
             print(len(enemyDict))
             if currentEnemies: # checks if list is empty and is under enemy unit cap
                 for i in currentEnemies:
-                    if len(enemyDict)<=stages[stageList[currentStage]][2]:
+                    if len(enemyDict)<=stages[stageList[currentStage]][2] and fullTimer == 0:
                         deploy("enemy", i[5], i[6], wallet)
                         enemyAmt += 1
 
