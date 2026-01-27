@@ -19,6 +19,7 @@ class Unit:
         self.knockbackFrame = 0
 
         if type == 'cat':
+            #getting the stats and initilizing them
             self.stats = open(f'Cats/{name}/stats.csv')
             self.stats = self.stats.readline().split(",")
             for i in range(len(self.stats)):
@@ -27,6 +28,7 @@ class Unit:
             self.attack = int(self.stats[1]*(1+(self.level-1)*.2))
             self.knockback = self.stats[6]
             self.knockbackCount = self.stats[6]-1
+            #getting the animations
             self.walkAnimations = []
             for i in range(self.stats[7]):    
                 animation = pygame.image.load(f'Cats/{name}/{'Normal' if self.level < 10 else 'Evolved'}/Walk/frame_{i}.png')
@@ -40,6 +42,7 @@ class Unit:
             self.x = 1400 if self.name != "CatBase" else 1600
             self.y = 100 if self.name == "CatBase" else random.randint(*((400, 450) if self.name != "Baha" else (200, 250)))
             self.xHitbox = self.x+200 if self.name != "CatBase" else 10
+        #enemy have different initialization steps
         elif type == 'enemy':
             self.stats = open(f'Enemies/{name}/stats.csv')
             self.stats = self.stats.readline().split(",")
@@ -65,6 +68,7 @@ class Unit:
             #(-100 if self.stats[3] == 0 else 200)
             
     def unitUpdate(self, positions):
+        #updates the unit's states and positions
         attack = False
         targets = []
         antiRed = False
@@ -79,6 +83,7 @@ class Unit:
             else:
                 self.x += int(self.stats[3]/2)
         elif self.state == 'attack':
+            #divided into three steps
             match self.attackState:
                 case "foreswing":
                     self.currentFrame += 1
@@ -110,6 +115,7 @@ class Unit:
             if self.knockbackFrame != 0:
                 self.x -= (-15 if self.type == 'cat' else 15)
                 self.currentAnimation = pygame.transform.rotate(self.attackAnimations[0], (-45 if self.type == 'cat' else 45))
+                #removes hitbox during knockback
                 self.xHitbox = 0
                 self.knockbackFrame -= 1
             else:
@@ -123,6 +129,7 @@ class Unit:
             "targets": (targets, antiRed)
         }
     
+    #detects if enemies are in range and go into attack if possible
     def unitDetectionUpdate(self, positions):
         if self.type == 'cat':
             detectBox = Rect(self.xHitbox-self.stats[2], self.y-400, self.stats[2], 1000)    
@@ -138,6 +145,7 @@ class Unit:
                 self.state = 'walk'
         return False, detectBox
     
+    #picks out a list of units being damaged by the attack
     def unitTargetUpdate(self, positions, attackType):
         targets = []
         antiRed = True if self.name in ["Axe", "Fish"] else False
@@ -148,10 +156,12 @@ class Unit:
         for i in positions:
             if detectBox.collidepoint(positions[i][0], positions[i][1]):
                 targets.append(i)
+                #if the unit is single target, return only 1
                 if attackType == 0:
                     return targets, antiRed
         return targets, antiRed
     
+    #damage calculations
     def takeDamage(self, damage, antired):
         red = False if self.name not in ["BBBunny", "OneHorn", "Pigge"] else True
         self.health -= damage*(2 if red and antired else 1)

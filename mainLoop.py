@@ -182,6 +182,7 @@ stages = {
                       10)
 }
 
+# to assist with level select
 stageList = ["Korea", "Cambodia", "Singapore", "Dubai", "South Africa", "Turkey", "Monaco", "Denmark", "Canada", "Colombia", "Easter Island", "Hollywood", "Moon"]
 
 # def playAudio(name):
@@ -229,7 +230,8 @@ keyPressedBoolean = [
 # list of cats on hotbar going into battle
 # name, cooldown timer
 hotbar = [["Cat", 60, 75], ["Tank", 60, 150], ["Axe", 60, 300], ["Gross", 66, 400], ["Cow", 60, 750], 
-            ["Bird", 60, 975], ["Fish", 126, 1200], ["Lizard", 306, 1500], ["Titan", 546, 1950], ["Baha", 3000, 0], ["CatBase", 0, 0]]
+            ["Bird", 60, 975], ["Fish", 126, 1200], ["Lizard", 306, 1500], ["Titan", 546, 1950], ["Baha", 3000, 4500], ["CatBase", 0, 0]]
+#cooldown stats manager
 catCooldowns = {
     "Cat": 0, 
     "Tank": 0,
@@ -277,6 +279,7 @@ def menuNav(direction):
     # for arrows
     monkey = 0
 
+#workercat/money generation stuff
 workerCatLevel = 1
 wallet = 1
 walletSizes = [0, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500]
@@ -326,6 +329,7 @@ def basehpcheck(value):
     if value[3][0] == "hp":
         return True
 
+# Checks if an enemy is being deployed this frame
 def enemyDeployCheck(enemy):
 
     match enemy[0]:
@@ -441,7 +445,9 @@ while True:
                 sys.exit()
 
     currentKeyPresses = list(filter(isPressed, keyPressedBoolean))
+
     match GAMESTATE:
+        #makes the menu/level select
         case "MENU":
             # font = pygame.font.Font(None, 90)
             if not load:
@@ -492,6 +498,7 @@ while True:
                 wallet = 0
                 workerCatLevel = 1
                 catCooldowns = resetCooldowns(catCooldowns)
+                #deploy the cat base and the enemy base
                 deploy("cat", "CatBase", 1, wallet)
                 catAmt += 1
                 deploy("enemy", stageList[currentStage], stages[stageList[currentStage]][0]/10, wallet)
@@ -514,7 +521,7 @@ while True:
                     6. health multiplier
                     '''
                 currentMoney = 0
-                workerCatLevel = 8
+                workerCatLevel = 1
                 currentOpponentBaseHp = stages[stageList[currentStage]][0]
                 numOfEnemies = 0
                 STAGESTAGE = 1
@@ -535,10 +542,12 @@ while True:
                 bossUnits = [unit for unit in stages[stageList[currentStage]][1] if unit[2] == -2]
 
                 load = True
+            #constantly updating stuff
             currentBaseHp = enemyDict[f"{stageList[currentStage]}1"].getHealth() if f"{stageList[currentStage]}1" in enemyDict else 0
             currentTime = int(time.time() - stageStartTime)
             bg = pygame.transform.scale(pygame.image.load(f'backgrounds/{stages[stageList[currentStage]][3]}'), (1920, 1080))
             screen.blit(bg, (0, -50))
+            #checkes if either base is dead, declare victory/defeat if so
             catList = catDict.keys()
             if "CatBase1" not in catList:
                 GAMESTATE = "END"
@@ -550,6 +559,8 @@ while True:
                 GAMESTATE = "END"
                 load = False
                 normalBattleMusic.stop()
+            
+            #Updating all unit's positions, animations, health, dealing damage, etc.
             catPos = {}
             if len(catDict) > 0:
                 for i in (catDict):
@@ -582,10 +593,13 @@ while True:
                 for i in (enemyDict):
                     enemyDict[i].unitDetectionUpdate(catPos)
 
+            #cooldown stuff
             for i in catCooldowns:
                 if catCooldowns[i] > 0:
                     catCooldowns[i] -= 1
             catLevel = stages[stageList[currentStage]][4]
+
+            #deploying cats
             for every in currentKeyPresses:
                 match every[0]:
                     case "q":
@@ -670,6 +684,7 @@ while True:
                     case _:
                         blockSound.play()
 
+            #Money calculations
             maxWallet = walletSizes[workerCatLevel]
             wallet += 1 + workerCatLevel*.5
             if wallet > maxWallet:
@@ -733,6 +748,8 @@ while True:
             #             baseHpProgression+1
             #             for i in currentHpEnemies:
             #                 currentEnemies.append(i)
+            
+            #Health Trigger units: Checks to add units that spawned based on hp of base
             if len(baseHpTriggerUnits) > 0 and "hp" not in STAGESTATES:
                 baseHpPercentage = (currentBaseHp / stages[stageList[currentStage]][0]) * 100
                 nextThreshold = baseHpTriggerUnits[0][3][1]
@@ -741,25 +758,25 @@ while True:
                     STAGESTATES.append("hp") 
                     lastHpTime = time.time()
                     baseHpTriggerUnits.pop(0)
+            #boss trigger checker
+            #wasn't working perfectly so I just spawned the boss in directly
             if len(bossUnits) > 0 and "boss" not in STAGESTATES: #checks if boss has been triggered
                 if currentBaseHp/stages[stageList[currentStage]][0]*100 <= bossUnits[0][3][1]:
                     STAGESTATES.append("boss")
                     lastBossTime = time.time() #used for unit deployment referencing
                     deploy("enemy", bossUnits[0][0], bossUnits[0][1], wallet)
            
+           #full limit buffer
+           #when the enemy goes from full limit to under, gives a second window where enemies can't spawn
+           #to prevent enemies constantly have a stream of bodies, preventing any meaningful progress
             if len(enemyDict) > stages[stageList[currentStage]][2]:
                 full = True 
             if len(enemyDict) < stages[stageList[currentStage]][2]+1 and full:
                 full = False
                 fullTimer = 30
-            
             fullTimer -= 1 if fullTimer > 0 else 0
-            
-            fullthingie = font.render(f"Full: {full}", True, ((0, 0, 0) if currentStage < 12 else (255, 255, 255)), None)
-            timer = font.render(f"FullTimer: {fullTimer}", True, ((0, 0, 0) if currentStage < 12 else (255, 255, 255)), None)
-            screen.blit(timer, (500, 228)) 
-            screen.blit(fullthingie, (500, 196))
 
+            #deploying the enemies
             currentEnemies = list(filter(enemyDeployCheck, enemies))
             if currentEnemies: # checks if list is empty and is under enemy unit cap
                 for i in currentEnemies:
