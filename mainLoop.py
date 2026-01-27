@@ -437,7 +437,6 @@ while True:
                 sys.exit()
 
     currentKeyPresses = list(filter(isPressed, keyPressedBoolean))
-    # print(GAMESTATE)
     match GAMESTATE:
         case "MENU":
             font = pygame.font.Font(None, 90)
@@ -477,7 +476,6 @@ while True:
                         blockSound.play()
         case "STAGE":
             font = pygame.font.Font(None, 32)
-            print(stageList[currentStage])
             if not load:
                 normalBattleMusic.play(-1)
                 catDict = {}
@@ -512,7 +510,7 @@ while True:
                     6. health multiplier
                     '''
                 currentMoney = 0
-                workerCatLevel = 1
+                workerCatLevel = 8
                 currentOpponentBaseHp = stages[stageList[currentStage]][0]
                 numOfEnemies = 0
                 STAGESTAGE = 1
@@ -527,7 +525,6 @@ while True:
                 baseHpTriggerUnits = [unit for unit in stages[stageList[currentStage]][1] if unit[3][0] == "hp"] # gets enemy tuples that have hp triggers
                 baseHpTriggerUnits.sort(key=lambda x: x[3][1], reverse=True)
                 # need list of just base hps so that triggers can be detected
-                print(baseHpTriggerUnits)
                 lastHpTime = 0
                 lastBossTime = 0
 
@@ -703,17 +700,15 @@ while True:
                     STAGESTATES.append("hp") 
                     lastHpTime = time.time()
                     baseHpTriggerUnits.pop(0)
-
             if len(bossUnits) > 0 and "boss" not in STAGESTATES: #checks if boss has been triggered
-                if currentOpponentBaseHp/stages[stageList[currentStage]][0]*100 <= bossUnits[0][3][1]:
+                if currentBaseHp/stages[stageList[currentStage]][0]*100 <= bossUnits[0][3][1]:
                     STAGESTATES.append("boss")
                     lastBossTime = time.time() #used for unit deployment referencing
-                    currentEnemies.append(bossUnits[0])
+                    deploy("enemy", bossUnits[0][0], bossUnits[0][1], wallet)
            
             if len(enemyDict) > stages[stageList[currentStage]][2]:
                 full = True 
             if len(enemyDict) < stages[stageList[currentStage]][2]+1 and full:
-                print("money")
                 full = False
                 fullTimer = 30
             
@@ -725,8 +720,6 @@ while True:
             screen.blit(fullthingie, (500, 196))
 
             currentEnemies = list(filter(enemyDeployCheck, enemies))
-            print(f"CurrentEnemies: {currentEnemies}")
-            print(len(enemyDict))
             if currentEnemies: # checks if list is empty and is under enemy unit cap
                 for i in currentEnemies:
                     if len(enemyDict)<=stages[stageList[currentStage]][2] and fullTimer == 0:
@@ -736,7 +729,6 @@ while True:
             if "hp" in STAGESTATES and len(baseHpTriggerUnits) > 0:
                 STAGESTATES.remove("hp")
 
-            print(f"{currentEnemies}")
 
         case "END":
             normalBattleMusic.stop()
