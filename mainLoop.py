@@ -13,6 +13,9 @@ pygame.display.set_caption('BATTLE CATS')
 
 pygame.font.init()
 
+bcFont = pygame.font.Font("text/anton.ttf", 100)
+smallerbcFont = pygame.font.Font("text/anton.ttf", 32)
+
 GAMESTATE = "MENU"
 '''
     GAME STATES:
@@ -229,7 +232,7 @@ hotbar = [["Cat", 60, 75], ["Tank", 60, 150], ["Axe", 60, 300], ["Gross", 66, 40
             ["Bird", 60, 975], ["Fish", 126, 1200], ["Lizard", 306, 1500], ["Titan", 546, 1950], ["Baha", 3000, 4500], ["CatBase", 0, 0]]
 catCooldowns = {
     "Cat": 0, 
-    "Tank": 0, 
+    "Tank": 0,
     "Axe": 0, 
     "Gross": 0, 
     "Cow": 0, 
@@ -325,11 +328,15 @@ def basehpcheck(value):
 
 def enemyDeployCheck(enemy):
     # print("check")
+
     match enemy[0]:
         case "start":
             if "start" not in STAGESTATES:
                 return False
-            if int(time.time()) - stageStartTime >= int(enemy[1]): # if current time from start of stage == 1st spawn time or last time
+            print(time.time())
+            print(enemy[1])
+            if time.time() - stageStartTime >= enemy[1]: # if current time from start of stage == 1st spawn time or last time
+                scrollingSound.play()
                 if enemy[4] == -1: # if remaining units left
                     enemy[1] = time.time() + random.randint(enemy[2][0], enemy[2][1]) #updates last time
                     return True
@@ -444,7 +451,7 @@ while True:
     # print(GAMESTATE)
     match GAMESTATE:
         case "MENU":
-            font = pygame.font.Font(None, 90)
+            # font = pygame.font.Font(None, 90)
             if not load:
                 victory.stop()
                 defeatSound.stop()
@@ -456,10 +463,10 @@ while True:
             screen.fill("white")
             screen.blit(bg, (0, 0))
             screen.blit(cat, (850, 400))
-            message = message = font.render(f"Select Stage", True, (255, 255, 255), None)
+            message = bcFont.render(f"Select Stage", True, (255, 255, 255), None)
             screen.blit(message, (100, 500))
-            pygame.draw.rect(screen, (0, 0, 0), Rect(50, 675, 450, 90))
-            message = message = font.render(f"{stageList[currentStage]}", True, (255, 255, 255), None)
+            pygame.draw.rect(screen, (0, 0, 0), Rect(50, 700, 600, 135))
+            message = bcFont.render(f"{stageList[currentStage]}", True, (255, 255, 255), None)
             screen.blit(message, (100, 700))
             for every in currentKeyPresses:
                 match every[0]:
@@ -480,7 +487,7 @@ while True:
                     case _:
                         blockSound.play()
         case "STAGE":
-            font = pygame.font.Font(None, 32)
+            # font = pygame.font.Font(None, 32)
             if not load:
                 normalBattleMusic.play(-1)
                 catDict = {}
@@ -632,13 +639,13 @@ while True:
             wallet += 1 + workerCatLevel*.5
             if wallet > maxWallet:
                 wallet = maxWallet
-            print(currentStage)
+            # print(currentStage)
             # x for money = 1700
-            money = font.render(f"${round(wallet)}/{maxWallet}", True, ((0, 0, 0) if currentStage < 12 else (255, 255, 255)), None)
+            money = smallerbcFont.render(f"${round(wallet)}/{maxWallet}", True, ((0, 0, 0) if currentStage < 12 else (255, 255, 255)), None)
             screen.blit(money, (0, 100))
-            workerLevel = font.render(f"Worker Level {workerCatLevel}", True, ((0, 0, 0) if currentStage < 12 else (255, 255, 255)), None)
+            workerLevel = smallerbcFont.render(f"Worker Level {workerCatLevel}", True, ((0, 0, 0) if currentStage < 12 else (255, 255, 255)), None)
             screen.blit(workerLevel, (0, 132))
-            upgradeCost = font.render(f"To Upgrade: ${180*workerCatLevel}", True, ((0, 0, 0) if currentStage < 12 else (255, 255, 255)), None)
+            upgradeCost = smallerbcFont.render(f"To Upgrade: ${180*workerCatLevel}", True, ((0, 0, 0) if currentStage < 12 else (255, 255, 255)), None)
             screen.blit(upgradeCost, (0, 164))
 
             if STAGESTAGE == 0:
@@ -669,18 +676,18 @@ while True:
                 baseHpProgression = 0
                 boss = False
                 enterBattleSound.play()
-                stageStartTime = int(time.time())
+                # stageStartTime = int(time.time())
 
                 baseHpTriggerUnits = [unit for unit in stages[stageList[currentStage]][1] if unit[3][0] == "hp"] # gets enemy tuples that have hp triggers
                 baseHpTriggerUnits.sort(key=lambda x: x[3][1], reverse=True)
                 # need list of just base hps so that triggers can be detected
-                print(baseHpTriggerUnits)
+                # print(baseHpTriggerUnits)4
                 lastHpTime = 0
                 lastBossTime = 0
 
                 bossUnits = [unit for unit in stages[stageList[currentStage]][1] if unit[2] == -2]
 
-                print(f"enemies:{enemies}")
+                # print(f"enemies:{enemies}")
             # if len(baseHpTriggerUnits) > 0 and "hp" not in STAGESTATES: # if any base hp triggers in current stage
             #     # baseHpPercentage = currentOpponentBaseHp/stages[stageList[currentStage]][0]*100 # current base hp percentage
             #     # if baseHpTriggerUnits[0][3][1] > baseHpPercentage > baseHpTriggerUnits[1][3][1]:
@@ -721,23 +728,28 @@ while True:
 
         case "END":
             normalBattleMusic.stop()
-            font = pygame.font.Font(None, 32) 
+            # font = pygame.font.Font(None, 32) 
             if not load:
                 if win:
-                    message = font.render(f"VICTORY", True, (0, 0, 0), None)
                     victory.play()
+                    victoryMessage = pygame.transform.scale(pygame.image.load("text/victory.png"), (700, 233))
+                    # screen.blit(victoryMessage, (1000, 532))
                 else:
-                    message = font.render(f"DEFEAT", True, (0, 0, 0), None)
+                    screen.fill("black")
                     defeatSound.play()
+                    defeatMessage = bcFont.render("Defeat...", True, (255, 255, 255), None)
+                    # screen.blit(defeatMessage, (1000, 532))
                 endscreen = pygame.image.load("backgrounds/rick-astley.jpg")
                 endscreen = pygame.transform.scale(endscreen, (2000, 1000))
                 if random.randint(0, 50) == 50:
                     screen.blit(endscreen, (0, 0))
-                else: 
-                    screen.fill("white")
-                screen.blit(message, (1000, 500))
-                message = font.render(f"Press Enter to Continue", True, (0, 0, 0), None)
-                screen.blit(message, (1000, 532))
+                elif win: 
+                    victoryScreen = pygame.transform.scale(pygame.image.load(f'backgrounds/{stages[stageList[currentStage]][3]}'), (1920, 1080))
+                    screen.blit(bg, (0, -50))
+                # screen.blit(message, (1000, 500))
+                message = smallerbcFont.render(f"Press Enter to Continue", True, (0, 0, 0) if win else (255, 255, 255), None)
+                screen.blit(message, (1920/2-(message.get_width()/2)-35, 1080/2+125-(message.get_width()/2)))
+                screen.blit(victoryMessage if win else defeatMessage, (1920/2-(victoryMessage.get_width()/2), 1080/2+100-(victoryMessage.get_width()/2)))
                 for i in catDict:
                     del i
                 for i in catPos:
