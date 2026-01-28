@@ -564,11 +564,15 @@ while True:
             catPos = {}
             if len(catDict) > 0:
                 for i in (catDict):
+                    #the function to update unit
                     display = catDict[i].unitUpdate(enemyPos)
+                    #updating the unit's position
                     catPos.update({i: display["hitbox"]})
                     screen.blit(display["animation"], display["displayPos"])
+                    # if the unit attacked
                     if display["attack?"]:
                         attackSound.play()
+                        #dealing damage to each target
                         for i in display["targets"][0]:
                             if enemyDict[i].takeDamage(display["damage"], display["targets"][1]):
                                 wallet += enemyDict[i].getMoney()*2
