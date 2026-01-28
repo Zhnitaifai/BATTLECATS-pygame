@@ -11,7 +11,7 @@
 * Tank Cat: Can barely move a pebble
 * Axe Cat: Anti-Red Maniac
 * Gross Cat: Long Range (and Legs)
-* Lion Cat: \**Tokyo Drift stats playing*
+* Lion Cat: \**Tokyo Drift stats playing**
 * Bird Cat: I believe I can fly
 * Fish Cat: Likes to eat things. Especially red things
 * Lizard Cat: Longer Range (eww, spit)
@@ -22,6 +22,18 @@ Deploy cats with Money
 * Money Generates passively
 * Upgrade to increase money generation
 * Defeating enemies grants extra money
+
+* Costs:
+	* Cat: $75
+	* Tank Cat: $150
+	* Axe Cat: $300
+	* Gross Cat: $400
+	* Lion Cat: $750
+	* Bird Cat: $975
+	* Fish Cat: $1200
+	* Lizard Cat: $1500
+	* Titan Cat: $1950
+	* ???: $4500
 
 ## Controls:
 * Enter: Select/Confirm
@@ -40,3 +52,20 @@ Deploy cats with Money
 * Tab: Upgrade Money
 * Esc: Pause/Unpause Game
 * F4: Quit Game
+
+
+## Peer Review:
+* Erisha: She didn't say much since our game wasn't fully finished, but her insight of the game was very comprehensive.
+* Aryan: He suggested to add effects/boosts to the cats as they hit the base to act like a reward for reaching it. Since we didn't have enough time and feel like our game is easy enough, this was not implemented
+
+## Challenges:
+* Units:
+	* Too many elements: Due to the nature of the game, we can't specifically make all of the units and manage them all. We choose to use a class because then we can uniformly create and manage all instances of units systematically.
+	* Detecting other units: Since each unit is their own object and can't really communicate with each other, we had to figure out a way to allow them to exchange their positions on the battlefield to allow enemy detection. This was solved by simply compiling each unit's positions into a list and using that list as a basis to detect enemies.
+	* Dealing damage: Since there are two types of damage-type (single and area) and damage usually happens a few frames after the enemies were detected, we created a different function to find a list of "targets" (units that are being damaged) and making the attacking process a multi-step one, with it dealing damage when the animation reaches a certain frame.
+* Base Game:
+	* Different "stages" in the game: Since our game needs three seperate mode: the menu/level select, the actual battle, and the end screen, we used a match case to help sort out and manage the code for each section of the game.
+	* Cat Cooldowns: To manage the cooldowns of each seperate unit, we made two seperate list: one with each cat's deployment-related stats (cost, cooldown), and one with just a cooldown counter for each unit. As you deploy a cat successfully, the counter will be increased by the cat's specific amount of cooldown and the counter will be decreased every frame.
+	* Bases: We couldn't really figure out how to make bases work, since they're not really units and they are involved with more things than normal units. After a while, we figured that making them units is much easier than to create a class for them. We modify their stats to make them immobile and unable to attack and making getter functions to get their health, which is very relevant for enemy units deployment. 
+	* Ending the battle: Since battles end when either bases die, we needed a way to detect when a base die. We initially thought of having bases send a death message of sorts to tell the game to end, but we figured that searching the unit dictionaries for the bases is much simpler and error-free, since units are deleted from the dictionary when they die.
+	* Boss not deploying: After the enemy deployment was fixed, the only hurdle was that the boss of each stage wasn't being properly deployed. This turned out to be a Occam's Razor situation though, since we can just directly deploy the boss since only one of them spawn in a stage
