@@ -148,7 +148,7 @@ class Unit:
     #picks out a list of units being damaged by the attack
     def unitTargetUpdate(self, positions, attackType):
         targets = []
-        antiRed = True if self.name in ["Axe", "Fish"] else False
+        antiRed = True if self.name in ["axe", "fish"] else False
         if self.type == 'cat':
             detectBox = Rect(self.xHitbox-self.stats[2], self.y-400, self.stats[2], 1000)    
         else:
